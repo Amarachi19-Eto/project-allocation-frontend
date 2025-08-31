@@ -1,0 +1,115 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+}
+
+.login-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    width: 100%;
+    max-width: 450px;
+}
+
+.login-header {
+    background: linear-gradient(135deg, #3a0ca3 0%, #4361ee 100%);
+    color: white;
+    padding: 30px 20px;
+    text-align: center;
+}
+
+.login-header h2 {
+    margin: 0;
+    font-weight: 700;
+}
+
+.login-header p {
+    margin: 10px 0 0;
+    opacity: 0.9;
+}
+
+.login-tabs {
+    display: flex;
+    border-bottom: 2px solid #e9ecef;
+    background: #f8f9fa;
+}
+
+.login-tabs .nav-item {
+    flex: 1;
+    text-align: center;
+}
+
+.login-tabs .nav-link {
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    border: none;
+    border-radius: 0;
+    color: #6c757d;
+    border-bottom: 3px solid transparent;
+}
+
+.login-tabs .nav-link:hover {
+    color: #3a0ca3;
+    background: rgba(58, 12, 163, 0.05);
+}
+
+.login-tabs .nav-link.active {
+    color: #3a0ca3;
+    border-bottom-color: #3a0ca3;
+    background: white;
+}
+
+.login-footer {
+    padding: 15px;
+    background: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    border-radius: 8px;
+    padding: 12px 15px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #3a0ca3;
+    box-shadow: 0 0 0 0.2rem rgba(58, 12, 163, 0.25);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #3a0ca3 0%, #4361ee 100%);
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(58, 12, 163, 0.3);
+}
+
+.alert {
+    border-radius: 8px;
+    border: none;
+    margin: 20px;
+}

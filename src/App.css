@@ -1,0 +1,371 @@
+/* App.css - Main Application Styles */
+
+.App {
+  text-align: center;
+}
+
+.app-container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.app-loading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.app-loading p {
+  margin-top: 1rem;
+}
+
+/* Navigation Styles */
+.navbar-brand {
+  font-weight: 700;
+}
+
+/* Dashboard Common Styles */
+.dashboard-header {
+  background: linear-gradient(135deg, #3a0ca3 0%, #4361ee 100%);
+  color: white;
+  padding: 2rem 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-header h1 {
+  margin: 0;
+  font-weight: 700;
+}
+
+.welcome-text {
+  margin: 0;
+  opacity: 0.9;
+}
+
+.header-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* Card Styles */
+.card {
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+.card-header {
+  border-radius: 15px 15px 0 0 !important;
+  border: none;
+  font-weight: 600;
+}
+
+/* Table Styles */
+.table {
+  margin-bottom: 0;
+}
+
+.table th {
+  border-top: none;
+  font-weight: 600;
+  color: #495057;
+  background: #f8f9fa;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 0.3rem 0.6rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.status-badge.pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status-badge.accepted {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-badge.declined {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Progress Bars */
+.progress {
+  background-color: #e9ecef;
+  border-radius: 10px;
+}
+
+.progress-bar {
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+/* Button Styles */
+.btn-group {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+/* Form Styles */
+.form-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+  border-radius: 8px;
+  border: 2px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #3a0ca3;
+  box-shadow: 0 0 0 0.2rem rgba(58, 12, 163, 0.25);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dashboard-header {
+    padding: 1rem 0;
+  }
+  
+  .dashboard-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .header-stats {
+    justify-content: flex-start;
+    margin-top: 1rem;
+  }
+  
+  .table-responsive {
+    font-size: 0.875rem;
+  }
+  
+  .btn-group {
+    flex-direction: column;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  animation: fadeIn 0.5s ease;
+}
+
+.table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+/* Student Dashboard Specific Styles */
+.student-dashboard {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.student-dashboard-loading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.topic-card .topic-title {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.topic-card .topic-description {
+  color: #6c757d;
+  margin-bottom: 1rem;
+}
+
+.guidelines-card .guidelines-content {
+  line-height: 1.6;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.guideline-item {
+  margin-bottom: 0.5rem;
+}
+
+.guideline-heading {
+  font-weight: 600;
+  color: #3a0ca3;
+  margin-top: 1rem;
+}
+
+.guideline-subitem {
+  padding-left: 1.5rem;
+  color: #495057;
+}
+
+.supervisor-card .contact-info {
+  margin-top: 1rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.contact-item i {
+  width: 20px;
+  margin-right: 0.5rem;
+  color: #4361ee;
+}
+
+.expertise-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+.costudents-card .co-students-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.co-student-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  border-bottom: 1px solid #f1f1f1;
+  gap: 1rem;
+}
+
+.co-student-item:last-child {
+  border-bottom: none;
+}
+
+.student-avatar i {
+  font-size: 1.5rem;
+  color: #6c757d;
+}
+
+.student-info {
+  flex: 1;
+}
+
+/* Login Page Styles */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.login-card {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: 100%;
+  max-width: 450px;
+}
+
+.login-header {
+  background: linear-gradient(135deg, #3a0ca3 0%, #4361ee 100%);
+  color: white;
+  padding: 30px 20px;
+  text-align: center;
+}
+
+.login-header h2 {
+  margin: 0;
+  font-weight: 700;
+}
+
+.login-header p {
+  margin: 10px 0 0;
+  opacity: 0.9;
+}
+
+.login-tabs {
+  display: flex;
+  border-bottom: 2px solid #e9ecef;
+  background: #f8f9fa;
+}
+
+.login-tabs .nav-item {
+  flex: 1;
+  text-align: center;
+}
+
+.login-tabs .nav-link {
+  padding: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  border: none;
+  border-radius: 0;
+  color: #6c757d;
+  border-bottom: 3px solid transparent;
+}
+
+.login-tabs .nav-link:hover {
+  color: #3a0ca3;
+  background: rgba(58, 12, 163, 0.05);
+}
+
+.login-tabs .nav-link.active {
+  color: #3a0ca3;
+  border-bottom-color: #3a0ca3;
+  background: white;
+}
+
+.login-footer {
+  padding: 15px;
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+}
