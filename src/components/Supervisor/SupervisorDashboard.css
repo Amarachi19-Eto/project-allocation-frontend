@@ -1,3 +1,4 @@
+/* SupervisorDashboard.css */
 .supervisor-dashboard {
   min-height: 100vh;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
@@ -81,9 +82,14 @@
 /* Status Badges */
 .status-badge {
   padding: 0.3rem 0.6rem;
-  border-radius: 20px;
+  border-radius: 0.25rem;
   font-weight: 600;
   font-size: 0.75rem;
+}
+
+.status-badge.accepted {
+  background-color: #d4edda;
+  color: #155724;
 }
 
 .status-badge.pending {
@@ -91,9 +97,9 @@
   color: #856404;
 }
 
-.status-badge.accepted {
-  background-color: #d4edda;
-  color: #155724;
+.status-badge.not-allocated {
+  background-color: #f8d7da;
+  color: #721c24;
 }
 
 .status-badge.declined {
@@ -155,6 +161,12 @@
 .btn-sm {
   padding: 0.25rem 0.5rem;
   font-size: 0.75rem;
+}
+
+/* Disabled button style */
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* Responsive Design */

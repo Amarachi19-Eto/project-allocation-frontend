@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './SupervisorDashboard.css';
+import { mockStudents, mockTopics, mockAllocations } from '../../mockData';
 
 const SupervisorDashboard = ({ user, onLogout }) => {
   const [assignedStudents, setAssignedStudents] = useState([]);
@@ -8,66 +9,57 @@ const SupervisorDashboard = ({ user, onLogout }) => {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
 
-  // Mock data - In real app, this would come from API
+  // Load consistent data
   useEffect(() => {
     setTimeout(() => {
-      setAssignedStudents([
-        {
-          id: 1,
-          name: "Chinedu Okoro",
-          regNo: "STU2024001",
-          email: "chinedu@university.edu",
-          projectTopic: "AI-Based Project Topic Duplication Detection System",
-          topicStatus: "accepted",
-          progress: 40,
-          lastMeeting: "2024-01-10",
-          nextMeeting: "2024-01-17",
-          contact: "+234-803-456-7890"
-        },
-        {
-          id: 2,
-          name: "Amina Mohammed",
-          regNo: "STU2024002", 
-          email: "amina@university.edu",
-          projectTopic: "Blockchain-based Secure Voting System",
-          topicStatus: "pending",
-          progress: 20,
-          lastMeeting: "2024-01-08",
-          nextMeeting: "2024-01-15",
-          contact: "+234-802-345-6789"
-        },
-        {
-          id: 3,
-          name: "Tunde Adeyemi",
-          regNo: "STU2024003",
-          email: "tunde@university.edu", 
-          projectTopic: "IoT-based Smart Classroom Monitoring",
-          topicStatus: "accepted",
-          progress: 60,
-          lastMeeting: "2024-01-12",
-          nextMeeting: "2024-01-19",
-          contact: "+234-805-678-9012"
-        }
-      ]);
+      // Get supervisor's students based on ACTUAL allocations
+      const supervisorStudents = mockStudents.filter(student => 
+        mockAllocations.some(allocation => 
+          allocation.studentId === student.id && allocation.supervisorId === 101
+        )
+      );
+
+      setAssignedStudents(supervisorStudents.map(student => {
+        const allocation = mockAllocations.find(a => a.studentId === student.id);
+        const topic = mockTopics.find(t => t.studentId === student.id);
+        
+        // Only show progress for allocated students
+        const hasAllocation = allocation && allocation.status === 'accepted';
+        
+        return {
+          id: student.id,
+          name: `${student.firstName} ${student.lastName}`,
+          regNo: student.registrationNumber,
+          email: student.email,
+          projectTopic: topic?.title || "No topic assigned",
+          topicStatus: allocation?.status || "not allocated",
+          progress: hasAllocation ? Math.floor(Math.random() * 60) + 20 : 0,
+          lastMeeting: hasAllocation ? "2025-01-10" : "Not scheduled",
+          nextMeeting: hasAllocation ? "2025-01-17" : "Not scheduled",
+          contact: student.phone || "+234-800-000-0000"
+        };
+      }));
 
       setLoading(false);
     }, 1000);
   }, []);
+
+  const handleFeedbackClick = (studentId) => {
+    const student = assignedStudents.find(s => s.id === studentId);
+    if (student.topicStatus === 'not allocated') {
+      setMessage(`Cannot give feedback - ${student.name} has no allocated topic yet.`);
+      return;
+    }
+    setSelectedStudent(student);
+    setFeedback('');
+    setMessage(`Ready to give feedback to ${student.name}`);
+  };
 
   const handleFeedbackSubmit = (studentId) => {
     setLoading(true);
     setTimeout(() => {
       setMessage(`Feedback sent to ${assignedStudents.find(s => s.id === studentId)?.name}`);
       setFeedback('');
-      setLoading(false);
-      setTimeout(() => setMessage(''), 3000);
-    }, 500);
-  };
-
-  const handleMeetingSchedule = (studentId, date) => {
-    setLoading(true);
-    setTimeout(() => {
-      setMessage(`Meeting scheduled with ${assignedStudents.find(s => s.id === studentId)?.name}`);
       setLoading(false);
       setTimeout(() => setMessage(''), 3000);
     }, 500);
@@ -145,6 +137,7 @@ const SupervisorDashboard = ({ user, onLogout }) => {
                         <th>Status</th>
                         <th>Progress</th>
                         <th>Last Meeting</th>
+                        <th>Next Meeting</th>
                         <th>Actions</th>
                       </tr>
                     </thead>
@@ -166,34 +159,40 @@ const SupervisorDashboard = ({ user, onLogout }) => {
                             </div>
                           </td>
                           <td>
-                            <span className={`status-badge ${student.topicStatus}`}>
+                            <span className={`status-badge ${student.topicStatus.replace(' ', '-')}`}>
                               {student.topicStatus.toUpperCase()}
                             </span>
                           </td>
                           <td>
-                            <div className="progress" style={{ height: '8px' }}>
-                              <div 
-                                className={`progress-bar ${student.progress < 30 ? 'bg-warning' : 'bg-success'}`}
-                                style={{ width: `${student.progress}%` }}
-                              ></div>
-                            </div>
-                            <small>{student.progress}% Complete</small>
+                            {student.progress > 0 ? (
+                              <>
+                                <div className="progress" style={{ height: '8px' }}>
+                                  <div
+                                    className={`progress-bar ${student.progress < 30 ? 'bg-warning' : 'bg-success'}`}
+                                    style={{ width: `${student.progress}%` }}
+                                  ></div>
+                                </div>
+                                <small>{student.progress}% Complete</small>
+                              </>
+                            ) : (
+                              <small className="text-muted">Not started</small>
+                            )}
                           </td>
                           <td>
                             <small>{student.lastMeeting}</small>
-                            <br />
-                            <small className="text-info">Next: {student.nextMeeting}</small>
+                          </td>
+                          <td>
+                            <small className="text-info">{student.nextMeeting}</small>
                           </td>
                           <td>
                             <div className="btn-group">
                               <button
                                 className="btn btn-outline-primary btn-sm"
-                                onClick={() => setSelectedStudent(selectedStudent?.id === student.id ? null : student)}
+                                onClick={() => handleFeedbackClick(student.id)}
+                                title="Give Feedback"
+                                disabled={student.topicStatus === 'not allocated'}
                               >
                                 <i className="fas fa-comment"></i> Feedback
-                              </button>
-                              <button className="btn btn-outline-success btn-sm">
-                                <i className="fas fa-calendar"></i> Meeting
                               </button>
                             </div>
                           </td>
