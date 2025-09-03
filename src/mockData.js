@@ -1,76 +1,56 @@
-// src/mockData.js
+// mockData.js
 export const mockStudents = [
   {
     id: 1,
-    username: 'student1',
-    email: 'john.doe@university.edu',
+    username: 'STU2024001',
+    password: 'hashed_password_1',
+    email: 'student1@university.edu',
     firstName: 'John',
     lastName: 'Doe',
     registrationNumber: 'STU2024001',
     department: 'Computer Science',
-    status: 'active',
     yearOfStudy: 4,
-    phone: '+234-803-123-4567'
+    phone: '+234-800-000-0001',
+    isAssigned: true
   },
   {
     id: 2,
-    username: 'student2',
-    email: 'chinedu.okoro@university.edu',
+    username: 'STU2024002',
+    password: 'hashed_password_2',
+    email: 'student2@university.edu',
     firstName: 'Chinedu',
     lastName: 'Okoro',
     registrationNumber: 'STU2024002',
     department: 'Computer Science',
-    status: 'active',
     yearOfStudy: 4,
-    phone: '+234-803-456-7890'
+    phone: '+234-800-000-0002',
+    isAssigned: true
   },
   {
     id: 3,
-    username: 'student3',
-    email: 'amina.mohammed@university.edu',
+    username: 'STU2024003',
+    password: 'hashed_password_3',
+    email: 'student3@university.edu',
     firstName: 'Amina',
     lastName: 'Mohammed',
     registrationNumber: 'STU2024003',
-    department: 'Electrical Engineering',
-    status: 'active',
-    yearOfStudy: 3,
-    phone: '+234-802-345-6789'
+    department: 'Computer Science',
+    yearOfStudy: 4,
+    phone: '+234-800-000-0003',
+    isAssigned: true
   },
   {
     id: 4,
-    username: 'student4',
-    email: 'tunde.adeyemi@university.edu',
+    username: 'STU2024004',
+    password: 'hashed_password_4',
+    email: 'student4@university.edu',
     firstName: 'Tunde',
     lastName: 'Adeyemi',
     registrationNumber: 'STU2024004',
     department: 'Computer Science',
-    status: 'active',
     yearOfStudy: 4,
-    phone: '+234-805-678-9012'
-  },
-  {
-    id: 5,
-    username: 'student5',
-    email: 'grace.okafor@university.edu',
-    firstName: 'Grace',
-    lastName: 'Okafor',
-    registrationNumber: 'STU2024005',
-    department: 'Computer Science',
-    status: 'active',
-    yearOfStudy: 4,
-    phone: '+234-806-789-0123'
-  },
-  {
-    id: 6,
-    username: 'student6',
-    email: 'emmanuel.bello@university.edu',
-    firstName: 'Emmanuel',
-    lastName: 'Bello',
-    registrationNumber: 'STU2024006',
-    department: 'Electrical Engineering',
-    status: 'active',
-    yearOfStudy: 3,
-    phone: '+234-807-890-1234'
+    phone: '+234-800-000-0004',
+    isAssigned: true
   }
 ];
 
@@ -78,34 +58,36 @@ export const mockSupervisors = [
   {
     id: 101,
     username: 'drsmith',
-    email: 'sarah.smith@university.edu',
+    password: 'hashed_password_smith',
+    email: 's.smith@university.edu',
     firstName: 'Sarah',
-    lastName: 'smith',
-    staffId: 'LEC2024001',
+    lastName: 'Smith',
+    staffId: 'LEC101',
     department: 'Computer Science',
-    status: 'active',
-    capacity: 5,
-    position: 'Associate Professor',
-    expertise: ['Artificial Intelligence', 'Machine Learning'],
+    position: 'Senior Lecturer',
+    maxProjects: 5,
+    currentProjects: 3,
+    expertise: ['Artificial Intelligence', 'Machine Learning', 'Natural Language Processing'],
     rating: 4.8,
-    office: 'Block C, Room 305',
+    office: 'Block A, Room 101',
     officeHours: 'Monday-Wednesday: 10AM-4PM',
     phone: '+234-801-234-5678'
   },
   {
     id: 102,
     username: 'drroberts',
-    email: 'michael.roberts@university.edu',
+    password: 'hashed_password_roberts',
+    email: 'm.roberts@university.edu',
     firstName: 'Michael',
     lastName: 'Roberts',
-    staffId: 'LEC2024002',
+    staffId: 'LEC102',
     department: 'Electrical Engineering',
-    status: 'active',
-    capacity: 4,
     position: 'Professor',
-    expertise: ['Internet of Things', 'Embedded Systems'],
-    rating: 4.7,
-    office: 'Block D, Room 210',
+    maxProjects: 6,
+    currentProjects: 2,
+    expertise: ['Power Systems', 'Renewable Energy', 'Control Systems'],
+    rating: 4.9,
+    office: 'Block B, Room 205',
     officeHours: 'Tuesday-Thursday: 9AM-3PM',
     phone: '+234-802-345-6789'
   }
@@ -114,53 +96,53 @@ export const mockSupervisors = [
 export const mockTopics = [
   {
     id: 1,
-    title: 'AI-Based Project Topic Duplication Detection System',
-    description: 'Develop a machine learning system to detect duplicate project topics using natural language processing and similarity algorithms',
-    department: 'Computer Science',
-    status: 'allocated',
-    createdAt: '2025-01-10',
+    title: "AI-Based Project Topic Duplication Detection System",
+    description: "Develop a machine learning system to detect duplicate project topics using natural language processing and similarity algorithms",
+    department: "Computer Science",
+    status: "allocated",
     studentId: 1,
-    supervisorId: 101
+    supervisorId: 101,
+    createdAt: "2024-12-01"
   },
   {
     id: 2,
-    title: 'Blockchain-based Secure Voting System',
-    description: 'Secure voting system using blockchain technology',
-    department: 'Computer Science',
-    status: 'allocated',
-    createdAt: '2025-01-12',
+    title: "Blockchain-based Secure Voting System",
+    description: "Design and implement a secure, transparent voting system using blockchain technology",
+    department: "Computer Science",
+    status: "allocated",
     studentId: 2,
-    supervisorId: 101
+    supervisorId: 101,
+    createdAt: "2024-12-01"
   },
   {
     id: 3,
-    title: 'IoT-based Smart Classroom Monitoring',
-    description: 'Real-time classroom monitoring using IoT sensors',
-    department: 'Electrical Engineering',
-    status: 'allocated',
-    createdAt: '2025-01-15',
+    title: "IoT-based Smart Classroom Monitoring System",
+    description: "Develop an IoT solution for monitoring classroom occupancy and environmental conditions",
+    department: "Computer Science",
+    status: "allocated",
     studentId: 3,
-    supervisorId: 102
+    supervisorId: 101,
+    createdAt: "2024-12-01"
   },
   {
     id: 4,
-    title: 'Mobile Health Diagnosis Assistant',
-    description: 'AI-powered mobile app for health diagnosis assistance',
-    department: 'Computer Science',
-    status: 'available',
-    createdAt: '2025-02-01',
-    studentId: null,
-    supervisorId: 101
+    title: "Renewable Energy Microgrid Design for Rural Communities",
+    description: "Design a sustainable microgrid system using solar and wind energy for off-grid communities",
+    department: "Electrical Engineering",
+    status: "allocated",
+    studentId: 4,
+    supervisorId: 102,
+    createdAt: "2024-12-01"
   },
   {
     id: 5,
-    title: 'Renewable Energy Monitoring System',
-    description: 'IoT system to monitor solar panel efficiency',
-    department: 'Electrical Engineering',
-    status: 'available',
-    createdAt: '2025-02-05',
+    title: "Machine Learning for Predictive Maintenance in Industrial Equipment",
+    description: "Develop ML models to predict equipment failures and schedule maintenance",
+    department: "Computer Science",
+    status: "available",
     studentId: null,
-    supervisorId: 102
+    supervisorId: null,
+    createdAt: "2024-12-01"
   }
 ];
 
@@ -168,34 +150,37 @@ export const mockAllocations = [
   {
     id: 1,
     studentId: 1,
-    student: 'student1',
     supervisorId: 101,
-    supervisor: 'drsmith',
-    topic: 'AI-Based Project Topic Duplication Detection System',
-    status: 'accepted',
-    allocatedDate: '2025-01-10',
-    deadline: '2025-05-15'
+    topicId: 1,
+    status: "accepted",
+    allocatedDate: "2025-01-15",
+    deadline: "2025-05-15"
   },
   {
     id: 2,
     studentId: 2,
-    student: 'student2',
     supervisorId: 101,
-    supervisor: 'drsmith',
-    topic: 'Blockchain-based Secure Voting System',
-    status: 'accepted',
-    allocatedDate: '2025-01-12',
-    deadline: '2025-05-15'
+    topicId: 2,
+    status: "accepted",
+    allocatedDate: "2025-01-15",
+    deadline: "2025-05-15"
   },
   {
     id: 3,
     studentId: 3,
-    student: 'student3',
+    supervisorId: 101,
+    topicId: 3,
+    status: "accepted",
+    allocatedDate: "2025-01-15",
+    deadline: "2025-05-15"
+  },
+  {
+    id: 4,
+    studentId: 4,
     supervisorId: 102,
-    supervisor: 'drroberts',
-    topic: 'IoT-based Smart Classroom Monitoring',
-    status: 'accepted',
-    allocatedDate: '2025-01-15',
-    deadline: '2025-05-15'
+    topicId: 4,
+    status: "accepted",
+    allocatedDate: "2025-01-15",
+    deadline: "2025-05-15"
   }
 ];
