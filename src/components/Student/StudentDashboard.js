@@ -19,7 +19,6 @@ const StudentDashboard = ({ user, onLogout }) => {
           const allocation = mockAllocations.find(a => a.studentId === currentStudent.id);
           const topic = mockTopics.find(t => t.id === allocation?.topicId);
           const supervisorData = mockSupervisors.find(s => s.id === allocation?.supervisorId);
-
           const coStudentsData = mockStudents.filter(s => {
             const studentAllocation = mockAllocations.find(a => a.studentId === s.id);
             return studentAllocation?.supervisorId === allocation?.supervisorId && s.id !== currentStudent.id;
@@ -116,6 +115,7 @@ const StudentDashboard = ({ user, onLogout }) => {
         } else {
           setMessage('Topic declined. Administrator will assign a new topic within 48 hours.');
         }
+        
         setLoading(false);
         setTimeout(() => setMessage(''), 5000);
       }, 500);
@@ -147,7 +147,7 @@ const StudentDashboard = ({ user, onLogout }) => {
                 Student Dashboard
               </h1>
               <p className="welcome-text">
-                Welcome back, <strong>{user.username}</strong>! 
+                Welcome back, <strong>{user.username}</strong>!
                 <span className="reg-number"> ({user.regNo || 'STU2024001'})</span>
               </p>
             </div>
@@ -207,7 +207,7 @@ const StudentDashboard = ({ user, onLogout }) => {
                           Please accept or decline your topic
                         </div>
                         <div className="d-grid gap-2">
-                          <button 
+                          <button
                             className="btn btn-success btn-lg"
                             onClick={() => handleTopicAction('accepted')}
                             disabled={loading}
@@ -215,7 +215,7 @@ const StudentDashboard = ({ user, onLogout }) => {
                             <i className="fas fa-check-circle me-2"></i>
                             {loading ? 'Processing...' : 'Accept Topic'}
                           </button>
-                          <button 
+                          <button
                             className="btn btn-outline-danger"
                             onClick={() => handleTopicAction('declined')}
                             disabled={loading}
@@ -258,8 +258,8 @@ const StudentDashboard = ({ user, onLogout }) => {
                 <div className="guidelines-content">
                   {guidelines.split('\n').map((line, index) => (
                     line.trim() && (
-                      <p 
-                        key={index} 
+                      <p
+                        key={index}
                         className={`guideline-item ${line.trim().match(/^[0-9]\./) ? 'guideline-heading' : 'guideline-subitem'}`}
                       >
                         {line.trim()}
@@ -290,7 +290,6 @@ const StudentDashboard = ({ user, onLogout }) => {
                         <small className="text-muted">({supervisor.rating})</small>
                       </div>
                     </div>
-
                     <div className="contact-info">
                       <div className="contact-item">
                         <i className="fas fa-envelope"></i>
@@ -309,7 +308,6 @@ const StudentDashboard = ({ user, onLogout }) => {
                         <span>{supervisor.officeHours}</span>
                       </div>
                     </div>
-
                     <div className="expertise-section mt-3">
                       <h6>Areas of Expertise:</h6>
                       <div className="expertise-tags">

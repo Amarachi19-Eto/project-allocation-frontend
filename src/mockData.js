@@ -99,7 +99,7 @@ export const mockTopics = [
     title: "AI-Based Project Topic Duplication Detection System",
     description: "Develop a machine learning system to detect duplicate project topics using natural language processing and similarity algorithms",
     department: "Computer Science",
-    status: "allocated",
+    status: "pending",
     studentId: 1,
     supervisorId: 101,
     createdAt: "2024-12-01"
