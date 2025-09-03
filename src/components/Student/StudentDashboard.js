@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './StudentDashboard.css';
+// Import the mock data that the function needs
+import { mockStudents, mockTopics, mockAllocations, mockSupervisors } from '../../mockData';
 
 const StudentDashboard = ({ user, onLogout }) => {
   const [projectTopic, setProjectTopic] = useState(null);
@@ -9,59 +11,131 @@ const StudentDashboard = ({ user, onLogout }) => {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
 
-  // Mock data - In real app, this would come from API
+  // Fetch student data from MOCK DATA
   useEffect(() => {
-    // Simulate API loading
-    setTimeout(() => {
-      setProjectTopic({
-        id: 1,
-        title: "AI-Based Duplication Detection System for Academic Projects",
-        description: "Develop a machine learning system to detect duplicate project topics using natural language processing",
-        status: "pending", // pending, accepted, declined
-        assignedDate: "2024-01-15"
-      });
+    const fetchStudentData = () => {
+      try {
+        // 1. Find the current student's data from mockStudents
+        // Assuming the user.username is the registration number
+        const currentStudent = mockStudents.find(s => s.registrationNumber === user.username);
+        
+        if (currentStudent) {
+          // 2. Find this student's allocation and topic from mockData
+          const allocation = mockAllocations.find(a => a.studentId === currentStudent.id);
+          const topic = mockTopics.find(t => t.id === allocation?.topicId);
+          const supervisorData = mockSupervisors.find(s => s.id === allocation?.supervisorId);
 
-      setSupervisor({
-        id: 101,
-        name: "Dr. Sarah Johnson",
-        email: "sarah.johnson@university.edu",
-        phone: "+234-801-234-5678",
-        department: "Computer Science",
-        office: "Block C, Room 305",
-        photo: "/api/placeholder/100/100",
-        expertise: ["Artificial Intelligence", "Machine Learning", "NLP"]
-      });
+          // 3. Find co-students (students with the same supervisor)
+          const coStudentsData = mockStudents.filter(s => {
+            const studentAllocation = mockAllocations.find(a => a.studentId === s.id);
+            return studentAllocation?.supervisorId === allocation?.supervisorId && s.id !== currentStudent.id;
+          }).map(s => {
+            const studentAlloc = mockAllocations.find(a => a.studentId === s.id);
+            const studentTopic = mockTopics.find(t => t.id === studentAlloc?.topicId);
+            return {
+              id: s.id,
+              name: `${s.firstName} ${s.lastName}`,
+              regNo: s.registrationNumber,
+              email: s.email,
+              projectTitle: studentTopic?.title || "No topic assigned",
+              status: studentAlloc?.status || "pending"
+            };
+          });
 
-      setCoStudents([
-        { id: 2, name: "Chinedu Okoro", regNo: "STU2024002", email: "chinedu@student.university.edu" },
-        { id: 3, name: "Amina Mohammed", regNo: "STU2024003", email: "amina@student.university.edu" },
-        { id: 4, name: "Tunde Adeyemi", regNo: "STU2024004", email: "tunde@student.university.edu" }
-      ]);
+          // 4. Set state with data from mockData
+          setProjectTopic(topic ? {
+            id: topic.id,
+            title: topic.title,
+            description: topic.description || "No description available.",
+            status: allocation?.status || "pending",
+            assignedDate: allocation?.allocatedDate || "2025-01-15",
+            deadline: "2025-05-15"
+          } : null);
 
-      setGuidelines(`
-      1. Students must accept or decline assigned topics within 7 days
-      2. Once accepted, topic changes require departmental approval
-      3. All projects must include originality reports
-      4. Regular meetings with supervisors are mandatory
-      5. Final submission must include complete documentation
-      6. Duplicate topics will be automatically rejected by the system
-      `);
+          setSupervisor(supervisorData ? {
+            id: supervisorData.id,
+            name: `Dr. ${supervisorData.firstName} ${supervisorData.lastName}`,
+            email: supervisorData.email,
+            phone: supervisorData.phone || "+234-800-000-0000",
+            department: supervisorData.department,
+            office: supervisorData.office || "Block A, Room 101",
+            officeHours: supervisorData.officeHours || "Monday-Friday: 9AM-5PM",
+            expertise: supervisorData.expertise || ["General Supervision"],
+            rating: supervisorData.rating || 4.5
+          } : null);
 
-      setLoading(false);
-    }, 1000);
-  }, []);
+          setCoStudents(coStudentsData);
+        }
 
-  const handleTopicAction = (action) => {
+        setGuidelines(`
+        PROJECT GUIDELINES AND REGULATIONS
+
+        1. TOPIC ACCEPTANCE POLICY
+           - Students must accept or decline assigned topics within 7 days of assignment
+           - Failure to respond will result in automatic topic acceptance
+           - Only one topic change request is allowed per student
+
+        2. SUPERVISION MEETINGS
+           - Minimum of 4 meetings per semester with supervisor
+           - Maintain meeting records in provided logbook
+           - Submit progress reports bi-weekly
+
+        3. PROJECT TIMELINE
+           - Proposal Submission: Week 4
+           - Chapter 1-3: Week 8  
+           - Complete Draft: Week 12
+           - Final Submission: Week 14
+
+        4. ORIGINALITY REQUIREMENTS
+           - Maximum 20% similarity index allowed
+           - Proper citation and referencing mandatory
+           - plagiarism results in automatic failure
+
+        5. TECHNICAL REQUIREMENTS
+           - Source code must be version controlled (Git)
+           - Database backup must be submitted
+           - Complete documentation required
+
+        6. ASSESSMENT CRITERIA
+           - Originality: 25%
+           - Technical Complexity: 30%
+           - Documentation: 20%
+           - Defense Performance: 25%
+        `);
+
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching student data:', error);
+        setLoading(false);
+      }
+    };
+
+    // Simulate API loading time
+    setTimeout(fetchStudentData, 1000);
+  }, [user.username]);
+
+  const handleTopicAction = async (action) => {
     setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setProjectTopic(prev => ({ ...prev, status: action }));
-      setMessage(`Topic ${action} successfully!`);
+    try {
+      // Simulate API call to backend
+      // In a real app, this would update the status in the database via your backend API
+      // For now, we just simulate it by updating the state
+      setTimeout(() => {
+        setProjectTopic(prev => ({ ...prev, status: action }));
+        
+        // Show different messages based on action
+        if (action === 'accepted') {
+          setMessage('🎉 Topic accepted successfully! You can now begin your project work.');
+        } else {
+          setMessage('Topic declined. Administrator will assign a new topic within 48 hours.');
+        }
+        setLoading(false);
+        setTimeout(() => setMessage(''), 5000);
+      }, 500);
+    } catch (error) {
+      setMessage('Error processing your request. Please try again.');
       setLoading(false);
-      
-      // Clear message after 3 seconds
-      setTimeout(() => setMessage(''), 3000);
-    }, 500);
+    }
   };
 
   if (loading) {
@@ -70,7 +144,7 @@ const StudentDashboard = ({ user, onLogout }) => {
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
-        <p>Loading your dashboard...</p>
+        <p>Loading your student dashboard...</p>
       </div>
     );
   }
@@ -83,15 +157,23 @@ const StudentDashboard = ({ user, onLogout }) => {
           <div className="row align-items-center">
             <div className="col-md-6">
               <h1>
-                <i className="fas fa-graduation-cap me-2"></i>
+                <i className="fas fa-user-graduate me-2"></i>
                 Student Dashboard
               </h1>
-              <p className="welcome-text">Welcome back, {user.username}!</p>
+              <p className="welcome-text">
+                Welcome back, <strong>{user.username}</strong>! 
+                <span className="reg-number"> ({user.regNo || 'STU2024001'})</span>
+              </p>
             </div>
             <div className="col-md-6 text-end">
-              <button className="btn btn-outline-danger btn-sm" onClick={onLogout}>
-                <i className="fas fa-sign-out-alt me-1"></i>Logout
-              </button>
+              <div className="header-actions">
+                <span className="last-login me-3">
+                  Last login: {new Date().toLocaleDateString()}
+                </span>
+                <button className="btn btn-outline-danger btn-sm" onClick={onLogout}>
+                  <i className="fas fa-sign-out-alt me-1"></i>Logout
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -100,55 +182,84 @@ const StudentDashboard = ({ user, onLogout }) => {
       {/* Main Content */}
       <div className="container mt-4">
         {message && (
-          <div className="alert alert-success alert-dismissible fade show" role="alert">
+          <div className={`alert ${message.includes('accepted') ? 'alert-success' : 'alert-info'} alert-dismissible fade show`} role="alert">
             {message}
             <button type="button" className="btn-close" onClick={() => setMessage('')}></button>
           </div>
         )}
 
         <div className="row">
-          {/* Project Topic Section */}
+          {/* Left Column - Project Topic & Guidelines */}
           <div className="col-lg-6">
+            {/* Project Topic Card */}
             <div className="card topic-card">
-              <div className="card-header bg-primary text-white">
+              <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <h5 className="mb-0">
                   <i className="fas fa-tasks me-2"></i>
                   Assigned Project Topic
                 </h5>
+                {projectTopic?.deadline && (
+                  <span className="badge bg-light text-dark">
+                    Due: {projectTopic.deadline}
+                  </span>
+                )}
               </div>
               <div className="card-body">
                 {projectTopic ? (
                   <>
-                    <h6 className="text-primary">{projectTopic.title}</h6>
-                    <p className="text-muted">{projectTopic.description}</p>
+                    <h6 className="text-primary topic-title">{projectTopic.title}</h6>
+                    <p className="text-muted topic-description">{projectTopic.description}</p>
                     
                     <div className="topic-meta">
-                      <small className="text-muted">
-                        <i className="fas fa-calendar me-1"></i>
-                        Assigned: {projectTopic.assignedDate}
-                      </small>
-                      <br />
-                      <small className={`status-badge ${projectTopic.status}`}>
-                        Status: {projectTopic.status.toUpperCase()}
-                      </small>
+                      <div className="d-flex justify-content-between">
+                        <small className="text-muted">
+                          <i className="fas fa-calendar me-1"></i>
+                          Assigned: {projectTopic.assignedDate}
+                        </small>
+                        <span className={`status-badge ${projectTopic.status}`}>
+                          {projectTopic.status.toUpperCase()}
+                        </span>
+                      </div>
                     </div>
 
                     {projectTopic.status === 'pending' && (
-                      <div className="topic-actions mt-3">
-                        <button 
-                          className="btn btn-success me-2"
-                          onClick={() => handleTopicAction('accepted')}
-                          disabled={loading}
-                        >
-                          <i className="fas fa-check me-1"></i>Accept Topic
-                        </button>
-                        <button 
-                          className="btn btn-danger"
-                          onClick={() => handleTopicAction('declined')}
-                          disabled={loading}
-                        >
-                          <i className="fas fa-times me-1"></i>Decline Topic
-                        </button>
+                      <div className="topic-actions mt-4">
+                        <div className="alert alert-warning">
+                          <i className="fas fa-exclamation-circle me-2"></i>
+                          Please accept or decline your topic before {projectTopic.deadline}
+                        </div>
+                        <div className="d-grid gap-2">
+                          <button 
+                            className="btn btn-success btn-lg"
+                            onClick={() => handleTopicAction('accepted')}
+                            disabled={loading}
+                          >
+                            <i className="fas fa-check-circle me-2"></i>
+                            {loading ? 'Processing...' : 'Accept Topic'}
+                          </button>
+                          <button 
+                            className="btn btn-outline-danger"
+                            onClick={() => handleTopicAction('declined')}
+                            disabled={loading}
+                          >
+                            <i className="fas fa-times-circle me-2"></i>
+                            Decline Topic
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {projectTopic.status === 'accepted' && (
+                      <div className="alert alert-success mt-3">
+                        <i className="fas fa-check-circle me-2"></i>
+                        Topic accepted on {new Date().toLocaleDateString()}. You may now begin your project work.
+                      </div>
+                    )}
+
+                    {projectTopic.status === 'declined' && (
+                      <div className="alert alert-info mt-3">
+                        <i className="fas fa-info-circle me-2"></i>
+                        Topic declined. Waiting for administrator to assign a new topic.
                       </div>
                     )}
                   </>
@@ -158,27 +269,34 @@ const StudentDashboard = ({ user, onLogout }) => {
               </div>
             </div>
 
-            {/* Guidelines Section */}
+            {/* Guidelines Card */}
             <div className="card guidelines-card mt-4">
               <div className="card-header bg-info text-white">
                 <h5 className="mb-0">
                   <i className="fas fa-book me-2"></i>
-                  Project Guidelines
+                  Project Guidelines & Regulations
                 </h5>
               </div>
               <div className="card-body">
                 <div className="guidelines-content">
                   {guidelines.split('\n').map((line, index) => (
-                    line.trim() && <p key={index} className="guideline-item">📌 {line.trim()}</p>
+                    line.trim() && (
+                      <p 
+                        key={index} 
+                        className={`guideline-item ${line.trim().match(/^[0-9]\./) ? 'guideline-heading' : 'guideline-subitem'}`}
+                      >
+                        {line.trim()}
+                      </p>
+                    )
                   ))}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Supervisor & Co-Students Section */}
+          {/* Right Column - Supervisor & Co-Students */}
           <div className="col-lg-6">
-            {/* Supervisor Details */}
+            {/* Supervisor Card */}
             <div className="card supervisor-card">
               <div className="card-header bg-success text-white">
                 <h5 className="mb-0">
@@ -189,33 +307,52 @@ const StudentDashboard = ({ user, onLogout }) => {
               <div className="card-body">
                 {supervisor ? (
                   <>
-                    <div className="supervisor-info">
+                    <div className="supervisor-header">
                       <h6 className="text-success">{supervisor.name}</h6>
-                      <p className="department-badge">{supervisor.department}</p>
-                      
-                      <div className="contact-info">
-                        <p>
-                          <i className="fas fa-envelope me-2"></i>
-                          {supervisor.email}
-                        </p>
-                        <p>
-                          <i className="fas fa-phone me-2"></i>
-                          {supervisor.phone}
-                        </p>
-                        <p>
-                          <i className="fas fa-building me-2"></i>
-                          {supervisor.office}
-                        </p>
+                      <span className="department-badge">{supervisor.department}</span>
+                      <div className="rating">
+                        <span className="stars">★★★★★</span>
+                        <small className="text-muted">({supervisor.rating})</small>
                       </div>
+                    </div>
 
-                      <div className="expertise-tags mt-3">
-                        <h6>Areas of Expertise:</h6>
+                    <div className="contact-info">
+                      <div className="contact-item">
+                        <i className="fas fa-envelope"></i>
+                        <span>{supervisor.email}</span>
+                      </div>
+                      <div className="contact-item">
+                        <i className="fas fa-phone"></i>
+                        <span>{supervisor.phone}</span>
+                      </div>
+                      <div className="contact-item">
+                        <i className="fas fa-building"></i>
+                        <span>{supervisor.office}</span>
+                      </div>
+                      <div className="contact-item">
+                        <i className="fas fa-clock"></i>
+                        <span>{supervisor.officeHours}</span>
+                      </div>
+                    </div>
+
+                    <div className="expertise-section mt-3">
+                      <h6>Areas of Expertise:</h6>
+                      <div className="expertise-tags">
                         {supervisor.expertise.map((skill, index) => (
                           <span key={index} className="badge bg-secondary me-1 mb-1">
                             {skill}
                           </span>
                         ))}
                       </div>
+                    </div>
+
+                    <div className="supervisor-actions mt-3">
+                      <button className="btn btn-outline-success btn-sm me-2">
+                        <i className="fas fa-calendar me-1"></i>Schedule Meeting
+                      </button>
+                      <button className="btn btn-outline-primary btn-sm">
+                        <i className="fas fa-envelope me-1"></i>Send Message
+                      </button>
                     </div>
                   </>
                 ) : (
@@ -224,24 +361,41 @@ const StudentDashboard = ({ user, onLogout }) => {
               </div>
             </div>
 
-            {/* Co-Students Section */}
+            {/* Co-Students Card */}
             <div className="card costudents-card mt-4">
               <div className="card-header bg-warning text-dark">
-                <h5 className="mb-0">
-                  <i className="fas fa-users me-2"></i>
-                  Co-Students ({coStudents.length})
-                </h5>
+                <div className="d-flex justify-content-between align-items-center">
+                  <h5 className="mb-0">
+                    <i className="fas fa-users me-2"></i>
+                    Co-Students
+                  </h5>
+                  <span className="badge bg-dark">{coStudents.length} students</span>
+                </div>
               </div>
               <div className="card-body">
                 {coStudents.length > 0 ? (
                   <div className="co-students-list">
                     {coStudents.map(student => (
                       <div key={student.id} className="co-student-item">
+                        <div className="student-avatar">
+                          <i className="fas fa-user-circle"></i>
+                        </div>
                         <div className="student-info">
                           <h6 className="mb-1">{student.name}</h6>
                           <p className="text-muted mb-0">{student.regNo}</p>
                           <small className="text-primary">{student.email}</small>
+                          {student.projectTitle && (
+                            <div className="project-info">
+                              <small className="text-muted">Project: {student.projectTitle}</small>
+                              <span className={`status-badge ${student.status}`}>
+                                {student.status.replace('_', ' ')}
+                              </span>
+                            </div>
+                          )}
                         </div>
+                        <button className="btn btn-outline-secondary btn-sm">
+                          <i className="fas fa-envelope"></i>
+                        </button>
                       </div>
                     ))}
                   </div>
