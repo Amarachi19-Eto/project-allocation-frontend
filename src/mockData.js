@@ -152,7 +152,7 @@ export const mockAllocations = [
     studentId: 1,
     supervisorId: 101,
     topicId: 1,
-    status: "accepted",
+    status: "pending",
     allocatedDate: "2025-01-15",
     deadline: "2025-05-15"
   },
@@ -161,7 +161,7 @@ export const mockAllocations = [
     studentId: 2,
     supervisorId: 101,
     topicId: 2,
-    status: "accepted",
+    status: "pending",
     allocatedDate: "2025-01-15",
     deadline: "2025-05-15"
   },
@@ -170,7 +170,7 @@ export const mockAllocations = [
     studentId: 3,
     supervisorId: 101,
     topicId: 3,
-    status: "accepted",
+    status: "pending",
     allocatedDate: "2025-01-15",
     deadline: "2025-05-15"
   },
@@ -179,7 +179,7 @@ export const mockAllocations = [
     studentId: 4,
     supervisorId: 102,
     topicId: 4,
-    status: "accepted",
+    status: "pending",
     allocatedDate: "2025-01-15",
     deadline: "2025-05-15"
   }
