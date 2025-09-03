@@ -476,17 +476,13 @@ const AdminDashboard = ({ user, onLogout }) => {
                               </td>
                               <td>
                                 {supervisor ? `Dr. ${supervisor.firstName} ${supervisor.lastName}` : 'N/A'}
-                                <br />
-                                <small className="text-muted">{supervisor?.department || 'N/A'}</small>
                               </td>
                               <td>
-                                <strong>{topic?.title || 'N/A'}</strong>
-                                <br />
-                                <small className="text-muted">{topic?.description?.substring(0, 50)}...</small>
+                                {topic?.title || 'N/A'}
                               </td>
                               <td>
-                                <span className={`badge ${allocation.status === 'accepted' ? 'bg-success' : allocation.status === 'pending' ? 'bg-warning' : 'bg-danger'}`}>
-                                  {allocation.status.toUpperCase()}
+                                <span className={`badge ${allocation.status === 'accepted' ? 'bg-success' : 'bg-warning'}`}>
+                                  {allocation.status}
                                 </span>
                               </td>
                               <td>{allocation.allocatedDate}</td>

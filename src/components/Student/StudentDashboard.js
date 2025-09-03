@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import './StudentDashboard.css';
-// Import the mock data that the function needs
 import { mockStudents, mockTopics, mockAllocations, mockSupervisors } from '../../mockData';
 
 const StudentDashboard = ({ user, onLogout }) => {
@@ -11,21 +10,16 @@ const StudentDashboard = ({ user, onLogout }) => {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
 
-  // Fetch student data from MOCK DATA
   useEffect(() => {
     const fetchStudentData = () => {
       try {
-        // 1. Find the current student's data from mockStudents
-        // Assuming the user.username is the registration number
         const currentStudent = mockStudents.find(s => s.registrationNumber === user.username);
         
         if (currentStudent) {
-          // 2. Find this student's allocation and topic from mockData
           const allocation = mockAllocations.find(a => a.studentId === currentStudent.id);
           const topic = mockTopics.find(t => t.id === allocation?.topicId);
           const supervisorData = mockSupervisors.find(s => s.id === allocation?.supervisorId);
 
-          // 3. Find co-students (students with the same supervisor)
           const coStudentsData = mockStudents.filter(s => {
             const studentAllocation = mockAllocations.find(a => a.studentId === s.id);
             return studentAllocation?.supervisorId === allocation?.supervisorId && s.id !== currentStudent.id;
@@ -42,14 +36,12 @@ const StudentDashboard = ({ user, onLogout }) => {
             };
           });
 
-          // 4. Set state with data from mockData
           setProjectTopic(topic ? {
             id: topic.id,
             title: topic.title,
             description: topic.description || "No description available.",
             status: allocation?.status || "pending",
-            assignedDate: allocation?.allocatedDate || "2025-01-15",
-            deadline: "2025-05-15"
+            assignedDate: allocation?.allocatedDate || "2025-01-15"
           } : null);
 
           setSupervisor(supervisorData ? {
@@ -110,20 +102,15 @@ const StudentDashboard = ({ user, onLogout }) => {
       }
     };
 
-    // Simulate API loading time
     setTimeout(fetchStudentData, 1000);
   }, [user.username]);
 
   const handleTopicAction = async (action) => {
     setLoading(true);
     try {
-      // Simulate API call to backend
-      // In a real app, this would update the status in the database via your backend API
-      // For now, we just simulate it by updating the state
       setTimeout(() => {
         setProjectTopic(prev => ({ ...prev, status: action }));
         
-        // Show different messages based on action
         if (action === 'accepted') {
           setMessage('🎉 Topic accepted successfully! You can now begin your project work.');
         } else {
@@ -151,7 +138,6 @@ const StudentDashboard = ({ user, onLogout }) => {
 
   return (
     <div className="student-dashboard">
-      {/* Header */}
       <header className="dashboard-header">
         <div className="container">
           <div className="row align-items-center">
@@ -179,7 +165,6 @@ const StudentDashboard = ({ user, onLogout }) => {
         </div>
       </header>
 
-      {/* Main Content */}
       <div className="container mt-4">
         {message && (
           <div className={`alert ${message.includes('accepted') ? 'alert-success' : 'alert-info'} alert-dismissible fade show`} role="alert">
@@ -189,20 +174,13 @@ const StudentDashboard = ({ user, onLogout }) => {
         )}
 
         <div className="row">
-          {/* Left Column - Project Topic & Guidelines */}
           <div className="col-lg-6">
-            {/* Project Topic Card */}
             <div className="card topic-card">
-              <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+              <div className="card-header bg-primary text-white">
                 <h5 className="mb-0">
                   <i className="fas fa-tasks me-2"></i>
                   Assigned Project Topic
                 </h5>
-                {projectTopic?.deadline && (
-                  <span className="badge bg-light text-dark">
-                    Due: {projectTopic.deadline}
-                  </span>
-                )}
               </div>
               <div className="card-body">
                 {projectTopic ? (
@@ -226,7 +204,7 @@ const StudentDashboard = ({ user, onLogout }) => {
                       <div className="topic-actions mt-4">
                         <div className="alert alert-warning">
                           <i className="fas fa-exclamation-circle me-2"></i>
-                          Please accept or decline your topic before {projectTopic.deadline}
+                          Please accept or decline your topic
                         </div>
                         <div className="d-grid gap-2">
                           <button 
@@ -252,7 +230,7 @@ const StudentDashboard = ({ user, onLogout }) => {
                     {projectTopic.status === 'accepted' && (
                       <div className="alert alert-success mt-3">
                         <i className="fas fa-check-circle me-2"></i>
-                        Topic accepted on {new Date().toLocaleDateString()}. You may now begin your project work.
+                        Topic accepted. You may now begin your project work.
                       </div>
                     )}
 
@@ -269,7 +247,6 @@ const StudentDashboard = ({ user, onLogout }) => {
               </div>
             </div>
 
-            {/* Guidelines Card */}
             <div className="card guidelines-card mt-4">
               <div className="card-header bg-info text-white">
                 <h5 className="mb-0">
@@ -294,9 +271,7 @@ const StudentDashboard = ({ user, onLogout }) => {
             </div>
           </div>
 
-          {/* Right Column - Supervisor & Co-Students */}
           <div className="col-lg-6">
-            {/* Supervisor Card */}
             <div className="card supervisor-card">
               <div className="card-header bg-success text-white">
                 <h5 className="mb-0">
@@ -345,15 +320,6 @@ const StudentDashboard = ({ user, onLogout }) => {
                         ))}
                       </div>
                     </div>
-
-                    <div className="supervisor-actions mt-3">
-                      <button className="btn btn-outline-success btn-sm me-2">
-                        <i className="fas fa-calendar me-1"></i>Schedule Meeting
-                      </button>
-                      <button className="btn btn-outline-primary btn-sm">
-                        <i className="fas fa-envelope me-1"></i>Send Message
-                      </button>
-                    </div>
                   </>
                 ) : (
                   <p className="text-muted">No supervisor assigned yet.</p>
@@ -361,7 +327,6 @@ const StudentDashboard = ({ user, onLogout }) => {
               </div>
             </div>
 
-            {/* Co-Students Card */}
             <div className="card costudents-card mt-4">
               <div className="card-header bg-warning text-dark">
                 <div className="d-flex justify-content-between align-items-center">
@@ -393,9 +358,6 @@ const StudentDashboard = ({ user, onLogout }) => {
                             </div>
                           )}
                         </div>
-                        <button className="btn btn-outline-secondary btn-sm">
-                          <i className="fas fa-envelope"></i>
-                        </button>
                       </div>
                     ))}
                   </div>
