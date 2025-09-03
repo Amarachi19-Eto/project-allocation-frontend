@@ -161,7 +161,7 @@ export const mockAllocations = [
     studentId: 2,
     supervisorId: 101,
     topicId: 2,
-    status: "pending",
+    status: "accepted",
     allocatedDate: "2025-01-15",
     deadline: "2025-05-15"
   },
@@ -184,4 +184,5 @@ export const mockAllocations = [
     deadline: "2025-05-15"
   }
 ];
+
 
