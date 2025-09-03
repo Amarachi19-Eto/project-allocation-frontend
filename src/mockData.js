@@ -80,7 +80,7 @@ export const mockSupervisors = [
     username: 'drsmith',
     email: 'sarah.smith@university.edu',
     firstName: 'Sarah',
-    lastName: 'Smith',
+    lastName: 'smith',
     staffId: 'LEC2024001',
     department: 'Computer Science',
     status: 'active',
