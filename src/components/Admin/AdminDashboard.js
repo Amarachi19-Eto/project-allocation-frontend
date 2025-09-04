@@ -64,6 +64,69 @@ const AdminDashboard = ({ user, onLogout }) => {
       alert(`Edit supervisor: ${supervisor.firstName} ${supervisor.lastName}\nEdit form would open here.`);
     }
   };
+  
+  //Add this new function for supervisors only
+  const handleAddSupervisor = () => {
+    setLoading(true);
+    setError('');
+
+    //Validation for Supervisor (similar to student but with staffId)
+    if (!newUser.username || !newUser.password || !newUser.email || !newUser.staffId) {
+      setError('Username, password, email, and Staff ID are required');
+      setLoading(false);
+      return;
+    }
+
+    // Check for duplicate supervisor (username or email)
+    const duplicate = supervisors.find(u =>
+      u.username === newUser.username || u.email === newUser.email 
+    )
+
+    if (duplicate) {
+      setError('A supervisor with this username or email already exists');
+      setLoading(false);
+      return;
+    }
+
+    //Simulate API call
+    setTimeout(() => {
+      const newSupervisor = {
+        id: Math.max(...supervisors.map(s => s.id), 0) + 1,
+        username: newUser.username,
+        email: newUser.email,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        staffId: newUser.staffId,
+        department: newUser.department,
+        status: 'active',
+        capacity: 5,
+        position: 'Lecturer',
+        expertise: ['General Supervision'],
+        rating: 4.5,
+        office: 'Block A, Room 101',
+        officeHours: 'Monday-Friday: 9AM-5PM',
+        phone: '+234-800-000-0000'
+      };
+
+      setSupervisors([...supervisors, newSupervisor]);
+      setMessage('Supervisor added successfully!'); // Correct message
+
+      // Reset the form
+      setNewUser({
+        type: 'student',
+        username: '',
+        password: '',
+        email: '',
+        firstName: '',
+        lastName: '',
+        department: 'Computer Science',
+        registrationNumber: '',
+        staffId: ''
+      });
+
+      setLoading(false);
+    }, 500);
+  };
 
   const handleDeleteSupervisor = (supervisorId) => {
     if (window.confirm('Are you sure you want to delete this supervisor? This action cannot be undone.')) {
@@ -673,10 +736,7 @@ const AdminDashboard = ({ user, onLogout }) => {
                   </div>
                   <button
                     className="btn btn-primary"
-                    onClick={() => {
-                      setNewUser({...newUser, type: 'supervisor'});
-                      handleAddUser();
-                    }}
+                    onClick={handleAddSupervisor}
                     disabled={loading || !newUser.username || !newUser.password || !newUser.email || !newUser.staffId}
                   >
                     {loading ? 'Adding...' : 'Add Supervisor'}
