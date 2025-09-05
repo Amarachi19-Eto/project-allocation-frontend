@@ -408,10 +408,13 @@ const AdminDashboard = ({ user, onLogout }) => {
                   <p className="welcome-text" style={{ margin: 0}}>
                     Nnamdi Azikiwe University, Awka
                     </p>
+                    <p style={{ margin: '5px 0 0 0', color: '#6c757d', fontSize: '14px' }}>
+                      System Administrator: <strong>{user.username}</strong>
+                    </p>
                   </div>
                 </div>
               </div>
-              
+
             <div className="col-md-6 text-end">
               <div className="header-stats">
                 <span className="badge bg-info me-2">

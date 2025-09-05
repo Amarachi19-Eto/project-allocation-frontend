@@ -156,6 +156,9 @@ const StudentDashboard = ({ user, onLogout }) => {
                     <p className="welcome-text" style={{ margin: 0 }}>
                       Nnamdi Azikiwe University, Awka
                     </p>
+                    <p style={{ margin: '5px 0 0 0', color: '#6c757d', fontSize: '14px' }}>
+                      Welcome, <strong>{user.username}</strong>
+                    </p>
                   </div>
                 </div>
               </div>
