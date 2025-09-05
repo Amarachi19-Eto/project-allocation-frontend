@@ -66,14 +66,14 @@ const Login = ({ onLogin }) => {
   return (
     <div className="login-container">
       {/* UNIZIK Logo and Header - ADDED CODE */}
-      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+      <div style={{ textAlign: 'center', marginBottom: '30px' }}>
         <img 
           src="/unizik-logo.png" 
           alt="UNIZIK Logo" 
           style={{ width: '70px' }} 
         />
         <h5 style={{ margin: '10px 0 0 0', fontWeight: 'bold' }}>Nnamdi Azikiwe University, Awka</h5>
-        <p style={{ margin: 0, color: 'gray' }}>Project Topic Allocation System</p>
+        <p style={{ margin: 0, color: 'black' }}>Project Topic Allocation System</p>
       </div>
 
       <div className="login-card">
