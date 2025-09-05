@@ -66,7 +66,7 @@ const Login = ({ onLogin }) => {
   return (
     <div className="login-container">
       {/* UNIZIK Logo and Header - ADDED CODE */}
-      <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+      <div style={{ textAlign: 'center', marginBottom: '70px' }}>
         <img 
           src="/unizik-logo.png" 
           alt="UNIZIK Logo" 
