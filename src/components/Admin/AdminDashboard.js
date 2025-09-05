@@ -394,14 +394,24 @@ const AdminDashboard = ({ user, onLogout }) => {
         <div className="container">
           <div className="row align-items-center">
             <div className="col-md-6">
-              <h1>
-                <i className="fas fa-user-shield me-2"></i>
-                Admin Dashboard
-              </h1>
-              <p className="welcome-text">
-                System Administrator: <strong>{user.username}</strong>
-              </p>
-            </div>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <img
+                  src="/unizik-logo.png"
+                  alt="UNIZIK Logo"
+                  style={{ width: '45px', marginRight: '15px' }}
+                />
+                <div>
+                  <h1 style={{ margin: 0, fontSize: '1.8rem'}}>
+                    <i className="fas fa-user-shield me-2"></i>
+                    Admin dashboard
+                  </h1>
+                  <p className="welcome-text" style={{ margin: 0}}>
+                    Nnamdi Azikiwe University, Awka
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
             <div className="col-md-6 text-end">
               <div className="header-stats">
                 <span className="badge bg-info me-2">

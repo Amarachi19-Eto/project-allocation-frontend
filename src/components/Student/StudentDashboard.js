@@ -142,15 +142,24 @@ const StudentDashboard = ({ user, onLogout }) => {
         <div className="container">
           <div className="row align-items-center">
             <div className="col-md-6">
-              <h1>
-                <i className="fas fa-user-graduate me-2"></i>
-                Student Dashboard
-              </h1>
-              <p className="welcome-text">
-                Welcome back, <strong>{user.username}</strong>!
-                <span className="reg-number"> ({user.regNo || 'STU2024001'})</span>
-              </p>
-            </div>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <img 
+                    src="/unizik-logo.png" 
+                    alt="UNIZIK Logo" 
+                    style={{ width: '45px', marginRight: '15px' }} 
+                  />
+                  <div>
+                    <h1 style={{ margin: 0, fontSize: '1.8rem' }}>
+                      <i className="fas fa-user-graduate me-2"></i>
+                      Student Dashboard
+                    </h1>
+                    <p className="welcome-text" style={{ margin: 0 }}>
+                      Nnamdi Azikiwe University, Awka
+                    </p>
+                  </div>
+                </div>
+              </div>
+
             <div className="col-md-6 text-end">
               <div className="header-actions">
                 <span className="last-login me-3">
