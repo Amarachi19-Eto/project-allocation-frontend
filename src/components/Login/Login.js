@@ -201,7 +201,7 @@ const Login = ({ onLogin }) => {
                 />
               </FormGroup>
               <Button color="primary" block disabled={loading}>
-                {loading ? <Spinner size="sm" /> : 'Login as Administrator'} {/* FIXED THIS LINE */}
+                {loading ? <Spinner size="sm" /> : 'Login as Administrator'}
               </Button>
             </Form>
           </TabPane>
@@ -209,11 +209,7 @@ const Login = ({ onLogin }) => {
         
         {error && <Alert color="danger" className="mt-3">{error}</Alert>}
         
-        <div className="login-footer">
-          <p className="text-center mb-0">
-            <small>Demo: Use your username and password</small>
-          </p>
-        </div>
+        {/* Demo text removed - cleaner interface */}
       </div>
     </div>
   );
