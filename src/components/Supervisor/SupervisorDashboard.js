@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './SupervisorDashboard.css';
 import { mockStudents, mockTopics, mockAllocations } from '../../mockData';
 
 const SupervisorDashboard = ({ user, onLogout }) => {
@@ -23,9 +22,6 @@ const SupervisorDashboard = ({ user, onLogout }) => {
         const allocation = mockAllocations.find(a => a.studentId === student.id);
         const topic = mockTopics.find(t => t.studentId === student.id);
         
-        // Only show progress for allocated students
-        const hasAllocation = allocation && allocation.status === 'accepted';
-        
         return {
           id: student.id,
           name: `${student.firstName} ${student.lastName}`,
@@ -33,9 +29,6 @@ const SupervisorDashboard = ({ user, onLogout }) => {
           email: student.email,
           projectTopic: topic?.title || "No topic assigned",
           topicStatus: allocation?.status || "not allocated",
-          progress: hasAllocation ? Math.floor(Math.random() * 60) + 20 : 0,
-          lastMeeting: hasAllocation ? "2025-01-10" : "Not scheduled",
-          nextMeeting: hasAllocation ? "2025-01-17" : "Not scheduled",
           contact: student.phone || "+234-800-000-0000"
         };
       }));
@@ -148,9 +141,6 @@ const SupervisorDashboard = ({ user, onLogout }) => {
                         <th>Student</th>
                         <th>Project Topic</th>
                         <th>Status</th>
-                        <th>Progress</th>
-                        <th>Last Meeting</th>
-                        <th>Next Meeting</th>
                         <th>Actions</th>
                       </tr>
                     </thead>
@@ -175,27 +165,6 @@ const SupervisorDashboard = ({ user, onLogout }) => {
                             <span className={`status-badge ${student.topicStatus.replace(' ', '-')}`}>
                               {student.topicStatus.toUpperCase()}
                             </span>
-                          </td>
-                          <td>
-                            {student.progress > 0 ? (
-                              <>
-                                <div className="progress" style={{ height: '8px' }}>
-                                  <div
-                                    className={`progress-bar ${student.progress < 30 ? 'bg-warning' : 'bg-success'}`}
-                                    style={{ width: `${student.progress}%` }}
-                                  ></div>
-                                </div>
-                                <small>{student.progress}% Complete</small>
-                              </>
-                            ) : (
-                              <small className="text-muted">Not started</small>
-                            )}
-                          </td>
-                          <td>
-                            <small>{student.lastMeeting}</small>
-                          </td>
-                          <td>
-                            <small className="text-info">{student.nextMeeting}</small>
                           </td>
                           <td>
                             <div className="btn-group">
@@ -261,7 +230,6 @@ const SupervisorDashboard = ({ user, onLogout }) => {
                       <div className="student-details">
                         <h6>Student Details:</h6>
                         <p><strong>Project:</strong> {selectedStudent.projectTopic}</p>
-                        <p><strong>Progress:</strong> {selectedStudent.progress}%</p>
                         <p><strong>Contact:</strong> {selectedStudent.contact}</p>
                         <p><strong>Email:</strong> {selectedStudent.email}</p>
                       </div>
