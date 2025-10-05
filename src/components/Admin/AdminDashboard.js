@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './AdminDashboard.css';
-import { mockStudents, mockSupervisors, mockTopics, mockAllocations } from '../../mockData';
+
+const API_BASE = 'http://localhost:5000/api';
 
 const AdminDashboard = ({ user, onLogout }) => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -35,13 +36,56 @@ const AdminDashboard = ({ user, onLogout }) => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    setTimeout(() => {
-      setStudents(mockStudents);
-      setSupervisors(mockSupervisors);
-      setTopics(mockTopics);
-      setAllocations(mockAllocations);
-      setLoading(false);
-    }, 1000);
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const token = localStorage.getItem('token');
+        
+        const [studentsRes, supervisorsRes, topicsRes] = await Promise.all([
+          fetch(`${API_BASE}/admin/students`, {
+            headers: { 
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          }),
+          fetch(`${API_BASE}/admin/supervisors`, {
+            headers: { 
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          }),
+          fetch(`${API_BASE}/admin/topics`, {
+            headers: { 
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          })
+        ]);
+
+        if (studentsRes.ok) {
+          const studentsData = await studentsRes.json();
+          setStudents(studentsData.data || []);
+        }
+
+        if (supervisorsRes.ok) {
+          const supervisorsData = await supervisorsRes.json();
+          setSupervisors(supervisorsData.data || []);
+        }
+
+        if (topicsRes.ok) {
+          const topicsData = await topicsRes.json();
+          setTopics(topicsData.data || []);
+        }
+
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError('Failed to fetch data. Please check your connection.');
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
   const handleEditStudent = (studentId) => {
