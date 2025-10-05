@@ -20,6 +20,30 @@
   opacity: 0.9;
 }
 
+/* Enhanced visibility for welcome text - WHITE and BOLD */
+.welcome-text strong {
+  color: #ffffff !important;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8) !important;
+  font-weight: 800 !important;
+  font-size: 1.1em !important;
+}
+
+.student-dashboard .welcome-text strong {
+  color: #ffffff !important;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9) !important;
+  font-weight: 800 !important;
+}
+
+.dashboard-header p strong {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  padding: 4px 12px !important;
+  border-radius: 6px !important;
+  font-weight: 800 !important;
+  font-size: 1em !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
 .student-dashboard-loading {
   display: flex;
   flex-direction: column;
@@ -107,15 +131,20 @@
   margin-bottom: 1rem;
 }
 
-.contact-info p {
-  margin-bottom: 0.5rem;
-  display: flex;
-  align-items: center;
+.contact-info {
+  margin-top: 1rem;
 }
 
-.contact-info i {
+.contact-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.contact-item i {
   width: 20px;
   color: #4361ee;
+  margin-right: 10px;
 }
 
 .expertise-tags {
@@ -128,6 +157,11 @@
   color: #495057;
 }
 
+.expertise-tags .badge {
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
 /* Co-Students Card */
 .co-students-list {
   max-height: 250px;
@@ -135,9 +169,12 @@
 }
 
 .co-student-item {
+  display: flex;
+  align-items: center;
   padding: 0.75rem;
   border-bottom: 1px solid #e9ecef;
   transition: background-color 0.2s ease;
+  gap: 1rem;
 }
 
 .co-student-item:last-child {
@@ -149,9 +186,22 @@
   border-radius: 8px;
 }
 
+.student-avatar i {
+  font-size: 1.5rem;
+  color: #6c757d;
+}
+
+.student-info {
+  flex: 1;
+}
+
 .student-info h6 {
   margin-bottom: 0.25rem;
   color: #495057;
+}
+
+.project-info {
+  margin-top: 0.5rem;
 }
 
 /* Responsive Design */
@@ -159,19 +209,19 @@
   .dashboard-header {
     padding: 1rem 0;
   }
-  
+
   .dashboard-header h1 {
     font-size: 1.5rem;
   }
-  
+
   .topic-actions {
     flex-direction: column;
   }
-  
+
   .topic-actions .btn {
     margin: 0.25rem 0;
   }
-  
+
   .card {
     margin-bottom: 1rem;
   }
@@ -191,4 +241,84 @@
 
 .card {
   animation: fadeIn 0.5s ease;
+}
+
+/* Supervisor Header Styles */
+.supervisor-header {
+  margin-bottom: 1rem;
+}
+
+.supervisor-header h6 {
+  color: #2d6a4f;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.stars {
+  color: #ffc107;
+}
+
+/* Feedback Section */
+.feedback-card .feedback-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.feedback-item {
+  background: #f8f9fa;
+  border-left: 4px solid #17a2b8 !important;
+}
+
+.feedback-text {
+  line-height: 1.5;
+}
+
+/* Header Actions */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.last-login {
+  font-size: 0.875rem;
+  opacity: 0.9;
+}
+
+/* Topic Meta */
+.topic-meta {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.topic-title {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.topic-description {
+  color: #6c757d;
+  line-height: 1.6;
+}
+
+/* Guideline Styles */
+.guideline-heading {
+  font-weight: 600;
+  color: #3a0ca3;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.guideline-subitem {
+  padding-left: 1.5rem;
+  color: #495057;
+  line-height: 1.5;
 }

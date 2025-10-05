@@ -1,3 +1,5 @@
+/* AdminDashboard.css */
+
 .admin-dashboard {
   min-height: 100vh;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
@@ -18,6 +20,30 @@
 .welcome-text {
   margin: 0;
   opacity: 0.9;
+}
+
+/* Enhanced visibility for welcome text - WHITE and BOLD */
+.welcome-text strong {
+  color: #ffffff !important;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8) !important;
+  font-weight: 800 !important;
+  font-size: 1.1em !important;
+}
+
+.admin-dashboard .welcome-text strong {
+  color: #ffffff !important;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9) !important;
+  font-weight: 800 !important;
+}
+
+.dashboard-header p strong {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  padding: 4px 12px !important;
+  border-radius: 6px !important;
+  font-weight: 800 !important;
+  font-size: 1em !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
 }
 
 .header-stats {
@@ -195,27 +221,27 @@
   .dashboard-header {
     padding: 1rem 0;
   }
-  
+
   .dashboard-header h1 {
     font-size: 1.5rem;
   }
-  
+
   .header-stats {
     justify-content: flex-start;
     margin-top: 1rem;
   }
-  
+
   .nav-tabs {
     flex-wrap: nowrap;
     overflow-x: auto;
   }
-  
+
   .nav-tabs .nav-link {
     padding: 0.5rem 1rem;
     font-size: 0.875rem;
     white-space: nowrap;
   }
-  
+
   .stat-card {
     margin-bottom: 1rem;
   }
@@ -243,4 +269,53 @@
 
 .table tbody tr:hover {
   background-color: #f8f9fa;
+}
+
+/* Form Section Styles */
+.card-body .form-control {
+  margin-bottom: 1rem;
+}
+
+.card-body .btn {
+  margin-top: 0.5rem;
+}
+
+/* Alert Styles */
+.alert {
+  border-radius: 8px;
+  border: none;
+}
+
+.alert-dismissible .btn-close {
+  padding: 0.75rem;
+}
+
+/* Badge Styles */
+.badge {
+  font-weight: 600;
+}
+
+/* Settings Section */
+.system-info {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #6c757d;
+}
+
+/* Allocation Management */
+.allocation-actions {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
+}
+
+/* Card Header Enhancements */
+.card-header {
+  font-weight: 600;
+}
+
+.card-header h5 {
+  margin: 0;
+  font-weight: 600;
 }

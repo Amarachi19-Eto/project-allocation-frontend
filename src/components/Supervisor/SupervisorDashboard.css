@@ -1,4 +1,5 @@
 /* SupervisorDashboard.css */
+
 .supervisor-dashboard {
   min-height: 100vh;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
@@ -19,6 +20,30 @@
 .welcome-text {
   margin: 0;
   opacity: 0.9;
+}
+
+/* Enhanced visibility for welcome text - WHITE and BOLD */
+.welcome-text strong {
+  color: #ffffff !important;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8) !important;
+  font-weight: 800 !important;
+  font-size: 1.1em !important;
+}
+
+.supervisor-dashboard .welcome-text strong {
+  color: #ffffff !important;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9) !important;
+  font-weight: 800 !important;
+}
+
+.dashboard-header p strong {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  padding: 4px 12px !important;
+  border-radius: 6px !important;
+  font-weight: 800 !important;
+  font-size: 1em !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
 }
 
 .header-stats {
@@ -174,20 +199,20 @@
   .dashboard-header {
     padding: 1rem 0;
   }
-  
+
   .dashboard-header h1 {
     font-size: 1.5rem;
   }
-  
+
   .header-stats {
     flex-direction: column;
     align-items: flex-end;
   }
-  
+
   .table-responsive {
     font-size: 0.875rem;
   }
-  
+
   .btn-group {
     flex-direction: column;
   }
@@ -215,4 +240,50 @@
 
 .table tbody tr:hover {
   background-color: #f8f9fa;
+}
+
+/* Student Details Section */
+.student-details p {
+  margin-bottom: 0.5rem;
+}
+
+.student-details strong {
+  color: #2d6a4f;
+  min-width: 80px;
+  display: inline-block;
+}
+
+/* Feedback Form Styles */
+.form-control {
+  border-radius: 8px;
+  border: 2px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #40916c;
+  box-shadow: 0 0 0 0.2rem rgba(64, 145, 108, 0.25);
+}
+
+/* Active Row Highlight */
+.table-active {
+  background-color: rgba(64, 145, 108, 0.1) !important;
+}
+
+/* Header Actions */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.last-login {
+  font-size: 0.875rem;
+  opacity: 0.9;
+}
+
+/* Guidelines Card Specific */
+.guidelines-card .card-body {
+  max-height: 400px;
+  overflow-y: auto;
 }

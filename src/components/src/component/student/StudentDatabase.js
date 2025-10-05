@@ -9,8 +9,8 @@ const StudentDashboard = ({ user, onLogout }) => {
   const [guidelines, setGuidelines] = useState('');
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
+  const [supervisorFeedback, setSupervisorFeedback] = useState([]);
 
-  // Fetch student data from MOCK DATA
   useEffect(() => {
     const fetchStudentData = () => {
       try {
@@ -20,7 +20,7 @@ const StudentDashboard = ({ user, onLogout }) => {
           const allocation = mockAllocations.find(a => a.studentId === currentStudent.id);
           const topic = mockTopics.find(t => t.id === allocation?.topicId);
           const supervisorData = mockSupervisors.find(s => s.id === allocation?.supervisorId);
-
+          
           const coStudentsData = mockStudents.filter(s => {
             const studentAllocation = mockAllocations.find(a => a.studentId === s.id);
             return studentAllocation?.supervisorId === allocation?.supervisorId && s.id !== currentStudent.id;
@@ -42,23 +42,48 @@ const StudentDashboard = ({ user, onLogout }) => {
             title: topic.title,
             description: topic.description || "No description available.",
             status: allocation?.status || "pending",
-            assignedDate: allocation?.allocatedDate || "2025-01-15",
-            deadline: "2025-05-15"
+            assignedDate: allocation?.allocatedDate || "2025-01-15"
           } : null);
 
           setSupervisor(supervisorData ? {
             id: supervisorData.id,
-            name: `Dr. ${supervisorData.firstName} ${supervisorData.lastName}`,
+            name: supervisorData.position === 'Professor' ? 
+              `Prof. ${supervisorData.firstName} ${supervisorData.lastName}` : 
+              `Dr. ${supervisorData.firstName} ${supervisorData.lastName}`,
             email: supervisorData.email,
-            phone: supervisorData.phone || "+234-800-000-0000",
+            phone: supervisorData.phone || "+234-810-038-2660",
             department: supervisorData.department,
-            office: supervisorData.office || "Block A, Room 101",
+            office: supervisorData.office || "Jupeb Building, Science Village",
             officeHours: supervisorData.officeHours || "Monday-Friday: 9AM-5PM",
             expertise: supervisorData.expertise || ["General Supervision"],
             rating: supervisorData.rating || 4.5
           } : null);
 
           setCoStudents(coStudentsData);
+
+          // Mock feedback data
+          const mockFeedback = [
+            {
+              id: 1,
+              message: "Great progress on the literature review. Please focus more on recent publications from 2024-2025.",
+              date: "2025-01-25",
+              type: "progress"
+            },
+            {
+              id: 2,
+              message: "Your project proposal needs more detailed methodology section. Let's discuss this in our next meeting.",
+              date: "2025-01-20",
+              type: "suggestion"
+            },
+            {
+              id: 3,
+              message: "Well done on completing the initial requirements analysis. The use case diagrams are clear and comprehensive.",
+              date: "2025-01-15",
+              type: "praise"
+            }
+          ];
+
+          setSupervisorFeedback(mockFeedback);
         }
 
         setGuidelines(`
@@ -118,12 +143,31 @@ const StudentDashboard = ({ user, onLogout }) => {
         } else {
           setMessage('Topic declined. Administrator will assign a new topic within 48 hours.');
         }
+        
         setLoading(false);
         setTimeout(() => setMessage(''), 5000);
       }, 500);
     } catch (error) {
       setMessage('Error processing your request. Please try again.');
       setLoading(false);
+    }
+  };
+
+  const getFeedbackBadgeColor = (type) => {
+    switch (type) {
+      case 'praise': return 'bg-success';
+      case 'suggestion': return 'bg-warning';
+      case 'progress': return 'bg-info';
+      default: return 'bg-secondary';
+    }
+  };
+
+  const getFeedbackTypeText = (type) => {
+    switch (type) {
+      case 'praise': return 'Praise';
+      case 'suggestion': return 'Suggestion';
+      case 'progress': return 'Progress Update';
+      default: return 'Feedback';
     }
   };
 
@@ -144,15 +188,26 @@ const StudentDashboard = ({ user, onLogout }) => {
         <div className="container">
           <div className="row align-items-center">
             <div className="col-md-6">
-              <h1>
-                <i className="fas fa-user-graduate me-2"></i>
-                Student Dashboard
-              </h1>
-              <p className="welcome-text">
-                Welcome back, <strong>{user.username}</strong>! 
-                <span className="reg-number"> ({user.regNo || 'STU2024001'})</span>
-              </p>
-            </div>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <img
+                    src="/unizik-logo.png"
+                    alt="UNIZIK Logo"
+                    style={{ width: '45px', marginRight: '15px' }}
+                  />
+                  <div>
+                    <h1 style={{ margin: 0, fontSize: '1.8rem' }}>
+                      <i className="fas fa-user-graduate me-2"></i>
+                      Student Dashboard
+                    </h1>
+                    <p className="welcome-text" style={{ margin: 0 }}>
+                      Nnamdi Azikiwe University, Awka
+                    </p>
+                    <p style={{ margin: '5px 0 0 0', color: '#6c757d', fontSize: '14px' }}>
+                      Welcome, <strong>{user.username}</strong>
+                    </p>
+                  </div>
+                </div>
+              </div>
             <div className="col-md-6 text-end">
               <div className="header-actions">
                 <span className="last-login me-3">
@@ -178,16 +233,11 @@ const StudentDashboard = ({ user, onLogout }) => {
         <div className="row">
           <div className="col-lg-6">
             <div className="card topic-card">
-              <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+              <div className="card-header bg-primary text-white">
                 <h5 className="mb-0">
                   <i className="fas fa-tasks me-2"></i>
                   Assigned Project Topic
                 </h5>
-                {projectTopic?.deadline && (
-                  <span className="badge bg-light text-dark">
-                    Due: {projectTopic.deadline}
-                  </span>
-                )}
               </div>
               <div className="card-body">
                 {projectTopic ? (
@@ -211,10 +261,10 @@ const StudentDashboard = ({ user, onLogout }) => {
                       <div className="topic-actions mt-4">
                         <div className="alert alert-warning">
                           <i className="fas fa-exclamation-circle me-2"></i>
-                          Please accept or decline your topic before {projectTopic.deadline}
+                          Please accept or decline your topic
                         </div>
                         <div className="d-grid gap-2">
-                          <button 
+                          <button
                             className="btn btn-success btn-lg"
                             onClick={() => handleTopicAction('accepted')}
                             disabled={loading}
@@ -222,7 +272,7 @@ const StudentDashboard = ({ user, onLogout }) => {
                             <i className="fas fa-check-circle me-2"></i>
                             {loading ? 'Processing...' : 'Accept Topic'}
                           </button>
-                          <button 
+                          <button
                             className="btn btn-outline-danger"
                             onClick={() => handleTopicAction('declined')}
                             disabled={loading}
@@ -237,7 +287,7 @@ const StudentDashboard = ({ user, onLogout }) => {
                     {projectTopic.status === 'accepted' && (
                       <div className="alert alert-success mt-3">
                         <i className="fas fa-check-circle me-2"></i>
-                        Topic accepted on {new Date().toLocaleDateString()}. You may now begin your project work.
+                        Topic accepted. You may now begin your project work.
                       </div>
                     )}
 
@@ -254,8 +304,54 @@ const StudentDashboard = ({ user, onLogout }) => {
               </div>
             </div>
 
-            <div className="card guidelines-card mt-4">
+            <div className="card feedback-card mt-4">
               <div className="card-header bg-info text-white">
+                <div className="d-flex justify-content-between align-items-center">
+                  <h5 className="mb-0">
+                    <i className="fas fa-comments me-2"></i>
+                    Supervisor Feedback
+                  </h5>
+                  {supervisorFeedback.length > 0 && (
+                    <span className="badge bg-light text-dark">{supervisorFeedback.length} messages</span>
+                  )}
+                </div>
+              </div>
+              <div className="card-body">
+                {supervisorFeedback.length > 0 ? (
+                  <div className="feedback-list">
+                    {supervisorFeedback.map(feedback => (
+                      <div key={feedback.id} className="feedback-item mb-3 p-3 border rounded">
+                        <div className="d-flex justify-content-between align-items-start mb-2">
+                          <span className={`badge ${getFeedbackBadgeColor(feedback.type)}`}>
+                            {getFeedbackTypeText(feedback.type)}
+                          </span>
+                          <small className="text-muted">
+                            <i className="fas fa-calendar me-1"></i>
+                            {feedback.date}
+                          </small>
+                        </div>
+                        <p className="feedback-text mb-0">{feedback.message}</p>
+                        {supervisor && (
+                          <small className="text-muted mt-2 d-block">
+                            <i className="fas fa-user-tie me-1"></i>
+                            From: {supervisor.name}
+                          </small>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center text-muted py-3">
+                    <i className="fas fa-inbox fa-2x mb-2"></i>
+                    <p>No feedback from supervisor yet.</p>
+                    <small>Your supervisor will provide feedback here after reviewing your work.</small>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="card guidelines-card mt-4">
+              <div className="card-header bg-warning text-dark">
                 <h5 className="mb-0">
                   <i className="fas fa-book me-2"></i>
                   Project Guidelines & Regulations
@@ -265,8 +361,8 @@ const StudentDashboard = ({ user, onLogout }) => {
                 <div className="guidelines-content">
                   {guidelines.split('\n').map((line, index) => (
                     line.trim() && (
-                      <p 
-                        key={index} 
+                      <p
+                        key={index}
                         className={`guideline-item ${line.trim().match(/^[0-9]\./) ? 'guideline-heading' : 'guideline-subitem'}`}
                       >
                         {line.trim()}
@@ -297,7 +393,6 @@ const StudentDashboard = ({ user, onLogout }) => {
                         <small className="text-muted">({supervisor.rating})</small>
                       </div>
                     </div>
-
                     <div className="contact-info">
                       <div className="contact-item">
                         <i className="fas fa-envelope"></i>
@@ -316,7 +411,6 @@ const StudentDashboard = ({ user, onLogout }) => {
                         <span>{supervisor.officeHours}</span>
                       </div>
                     </div>
-
                     <div className="expertise-section mt-3">
                       <h6>Areas of Expertise:</h6>
                       <div className="expertise-tags">
@@ -335,13 +429,13 @@ const StudentDashboard = ({ user, onLogout }) => {
             </div>
 
             <div className="card costudents-card mt-4">
-              <div className="card-header bg-warning text-dark">
+              <div className="card-header bg-secondary text-white">
                 <div className="d-flex justify-content-between align-items-center">
                   <h5 className="mb-0">
                     <i className="fas fa-users me-2"></i>
                     Co-Students
                   </h5>
-                  <span className="badge bg-dark">{coStudents.length} students</span>
+                  <span className="badge bg-light text-dark">{coStudents.length} students</span>
                 </div>
               </div>
               <div className="card-body">

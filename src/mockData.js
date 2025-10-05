@@ -1,12 +1,13 @@
-// mockData.js
+// In your mockData.js file, update the mockStudents and mockSupervisors arrays:
+
 export const mockStudents = [
   {
     id: 1,
     username: 'STU2024001',
     password: 'hashed_password_1',
-    email: 'student1@university.edu',
-    firstName: 'John',
-    lastName: 'Doe',
+    email: 'etokwudo.amala@university.edu',
+    firstName: 'Etokwudo',
+    lastName: 'Amala Cynthia',
     registrationNumber: 'STU2024001',
     department: 'Computer Science',
     yearOfStudy: 4,
@@ -17,9 +18,9 @@ export const mockStudents = [
     id: 2,
     username: 'STU2024002',
     password: 'hashed_password_2',
-    email: 'student2@university.edu',
-    firstName: 'Chinedu',
-    lastName: 'Okoro',
+    email: 'eze.chisom@university.edu',
+    firstName: 'Eze',
+    lastName: 'Chisom Emmanuel',
     registrationNumber: 'STU2024002',
     department: 'Computer Science',
     yearOfStudy: 4,
@@ -30,9 +31,9 @@ export const mockStudents = [
     id: 3,
     username: 'STU2024003',
     password: 'hashed_password_3',
-    email: 'student3@university.edu',
-    firstName: 'Amina',
-    lastName: 'Mohammed',
+    email: 'enweani.emmanuel@university.edu',
+    firstName: 'Enweani',
+    lastName: 'Emmanuel Ebube',
     registrationNumber: 'STU2024003',
     department: 'Computer Science',
     yearOfStudy: 4,
@@ -43,9 +44,9 @@ export const mockStudents = [
     id: 4,
     username: 'STU2024004',
     password: 'hashed_password_4',
-    email: 'student4@university.edu',
-    firstName: 'Tunde',
-    lastName: 'Adeyemi',
+    email: 'nweke.arinze@university.edu',
+    firstName: 'Nweke',
+    lastName: 'Arinze Michael',
     registrationNumber: 'STU2024004',
     department: 'Computer Science',
     yearOfStudy: 4,
@@ -57,11 +58,11 @@ export const mockStudents = [
 export const mockSupervisors = [
   {
     id: 101,
-    username: 'drsmith',
-    password: 'hashed_password_smith',
-    email: 's.smith@university.edu',
-    firstName: 'Sarah',
-    lastName: 'Smith',
+    username: 'dranigbogu',
+    password: 'hashed_password_anigbogu',
+    email: 'g.anigbogu@university.edu',
+    firstName: 'Gloria',
+    lastName: 'N. Anigbogu',
     staffId: 'LEC101',
     department: 'Computer Science',
     position: 'Senior Lecturer',
@@ -69,27 +70,27 @@ export const mockSupervisors = [
     currentProjects: 3,
     expertise: ['Artificial Intelligence', 'Machine Learning', 'Natural Language Processing'],
     rating: 4.8,
-    office: 'Block A, Room 101',
+    office: 'Jupeb Building, Science Village',
     officeHours: 'Monday-Wednesday: 10AM-4PM',
-    phone: '+234-801-234-5678'
+    phone: '+234-810-038-2660'
   },
   {
     id: 102,
-    username: 'drroberts',
-    password: 'hashed_password_roberts',
-    email: 'm.roberts@university.edu',
-    firstName: 'Michael',
-    lastName: 'Roberts',
+    username: 'professor',
+    password: 'hashed_password_ejiofor',
+    email: 'v.ejiofor@university.edu',
+    firstName: 'V.E',
+    lastName: 'Ejiofor',
     staffId: 'LEC102',
-    department: 'Electrical Engineering',
+    department: 'Computer Science',
     position: 'Professor',
     maxProjects: 6,
-    currentProjects: 2,
-    expertise: ['Power Systems', 'Renewable Energy', 'Control Systems'],
+    currentProjects: 1,
+    expertise: ['Software Engineering', 'Database Systems', 'Web Technologies'],
     rating: 4.9,
-    office: 'Block B, Room 205',
+    office: 'Jupeb Building, Science Village',
     officeHours: 'Tuesday-Thursday: 9AM-3PM',
-    phone: '+234-802-345-6789'
+    phone: '+234-810-038-2660'
   }
 ];
 
@@ -128,20 +129,10 @@ export const mockTopics = [
     id: 4,
     title: "Renewable Energy Microgrid Design for Rural Communities",
     description: "Design a sustainable microgrid system using solar and wind energy for off-grid communities",
-    department: "Electrical Engineering",
+    department: "Computer Science",
     status: "allocated",
     studentId: 4,
     supervisorId: 102,
-    createdAt: "2024-12-01"
-  },
-  {
-    id: 5,
-    title: "Machine Learning for Predictive Maintenance in Industrial Equipment",
-    description: "Develop ML models to predict equipment failures and schedule maintenance",
-    department: "Computer Science",
-    status: "available",
-    studentId: null,
-    supervisorId: null,
     createdAt: "2024-12-01"
   }
 ];
@@ -184,5 +175,3 @@ export const mockAllocations = [
     deadline: "2025-05-15"
   }
 ];
-
-
