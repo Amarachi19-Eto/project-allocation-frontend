@@ -125,22 +125,6 @@ export const mockTopics = [
     studentId: 4,
     createdAt: '2024-01-10'
   },
-  {
-    id: 5,
-    title: 'AI-Powered Student Performance Prediction System',
-    description: 'Develop a machine learning system to predict student academic performance based on historical data and learning patterns',
-    department: 'Computer Science',
-    status: 'available',
-    createdAt: '2024-01-15'
-  },
-  {
-    id: 6,
-    title: 'Smart Campus Navigation Mobile Application',
-    description: 'Create a mobile app with augmented reality features for campus navigation and facility location',
-    department: 'Computer Science',
-    status: 'available',
-    createdAt: '2024-01-15'
-  }
 ];
 
 export const mockAllocations = [

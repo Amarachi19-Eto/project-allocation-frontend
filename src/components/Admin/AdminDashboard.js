@@ -891,10 +891,9 @@ const AdminDashboard = ({ user, onLogout }) => {
                       placeholder="Enter topic title"
                     />
                     {newTopic.title && checkDuplicateTopic(newTopic.title) && (
-                      <div className="alert alert-warning mt-2 p-2">
+                      <div className="text-danger mt-1">
                         <i className="fas fa-exclamation-triangle me-2"></i>
-                        <strong>Duplicate Topic Detected!</strong><br/>
-                        A topic with the title "<strong>{newTopic.title}</strong>" already exists.
+                        Topic with the title already exists
                       </div>
                     )}
                   </div>
