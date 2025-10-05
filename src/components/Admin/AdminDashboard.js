@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './AdminDashboard.css';
-
-const API_BASE = 'http://localhost:5000/api';
+import { mockStudents, mockSupervisors, mockTopics, mockAllocations } from '../../mockData';
 
 const AdminDashboard = ({ user, onLogout }) => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -36,56 +35,14 @@ const AdminDashboard = ({ user, onLogout }) => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const token = localStorage.getItem('token');
-        
-        const [studentsRes, supervisorsRes, topicsRes] = await Promise.all([
-          fetch(`${API_BASE}/admin/students`, {
-            headers: { 
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            }
-          }),
-          fetch(`${API_BASE}/admin/supervisors`, {
-            headers: { 
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            }
-          }),
-          fetch(`${API_BASE}/admin/topics`, {
-            headers: { 
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            }
-          })
-        ]);
-
-        if (studentsRes.ok) {
-          const studentsData = await studentsRes.json();
-          setStudents(studentsData.data || []);
-        }
-
-        if (supervisorsRes.ok) {
-          const supervisorsData = await supervisorsRes.json();
-          setSupervisors(supervisorsData.data || []);
-        }
-
-        if (topicsRes.ok) {
-          const topicsData = await topicsRes.json();
-          setTopics(topicsData.data || []);
-        }
-
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setError('Failed to fetch data. Please check your connection.');
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    // Use mock data instead of API calls
+    setTimeout(() => {
+      setStudents(mockStudents);
+      setSupervisors(mockSupervisors);
+      setTopics(mockTopics);
+      setAllocations(mockAllocations);
+      setLoading(false);
+    }, 1000);
   }, []);
 
   const handleEditStudent = (studentId) => {
@@ -108,23 +65,22 @@ const AdminDashboard = ({ user, onLogout }) => {
       alert(`Edit supervisor: ${supervisor.firstName} ${supervisor.lastName}\nEdit form would open here.`);
     }
   };
-  
-  //Add this new function for supervisors only
+
   const handleAddSupervisor = () => {
     setLoading(true);
     setError('');
 
-    //Validation for Supervisor (similar to student but with staffId)
+    // Validation for Supervisor
     if (!newUser.username || !newUser.password || !newUser.email || !newUser.staffId) {
       setError('Username, password, email, and Staff ID are required');
       setLoading(false);
       return;
     }
 
-    // Check for duplicate supervisor (username or email)
+    // Check for duplicate supervisor
     const duplicate = supervisors.find(u =>
       u.username === newUser.username || u.email === newUser.email 
-    )
+    );
 
     if (duplicate) {
       setError('A supervisor with this username or email already exists');
@@ -132,7 +88,7 @@ const AdminDashboard = ({ user, onLogout }) => {
       return;
     }
 
-    //Simulate API call
+    // Simulate API call
     setTimeout(() => {
       const newSupervisor = {
         id: Math.max(...supervisors.map(s => s.id), 0) + 1,
@@ -153,7 +109,7 @@ const AdminDashboard = ({ user, onLogout }) => {
       };
 
       setSupervisors([...supervisors, newSupervisor]);
-      setMessage('Supervisor added successfully!'); // Correct message
+      setMessage('Supervisor added successfully!');
 
       // Reset the form
       setNewUser({
@@ -231,6 +187,7 @@ const AdminDashboard = ({ user, onLogout }) => {
       );
       const newAllocations = [];
       const updatedTopics = [...topics];
+      
       unallocatedStudents.forEach(student => {
         const matchingTopic = availableTopics.find(topic =>
           topic.department === student.department &&
@@ -240,6 +197,7 @@ const AdminDashboard = ({ user, onLogout }) => {
           const departmentSupervisor = supervisors.find(supervisor =>
             supervisor.department === student.department
           ) || supervisors[0];
+          
           newAllocations.push({
             id: Math.max(...allocations.map(a => a.id), 0) + newAllocations.length + 1,
             studentId: student.id,
@@ -248,10 +206,11 @@ const AdminDashboard = ({ user, onLogout }) => {
             supervisor: departmentSupervisor.username,
             topic: matchingTopic.title,
             topicId: matchingTopic.id,
-            status: 'pending', // Changed to pending for some students
+            status: 'pending',
             allocatedDate: new Date().toISOString().split('T')[0],
             deadline: '2025-05-15'
           });
+          
           const topicIndex = updatedTopics.findIndex(t => t.id === matchingTopic.id);
           if (topicIndex !== -1) {
             updatedTopics[topicIndex] = {
@@ -262,6 +221,7 @@ const AdminDashboard = ({ user, onLogout }) => {
           }
         }
       });
+      
       if (newAllocations.length > 0) {
         setAllocations([...allocations, ...newAllocations]);
         setTopics(updatedTopics);
@@ -291,6 +251,7 @@ const AdminDashboard = ({ user, onLogout }) => {
         ];
       })
     ].map(row => row.join(',')).join('\n');
+    
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
@@ -307,15 +268,18 @@ const AdminDashboard = ({ user, onLogout }) => {
       setLoading(false);
       return;
     }
+    
     const users = newUser.type === 'student' ? students : supervisors;
     const duplicate = users.find(u =>
       u.username === newUser.username || u.email === newUser.email
     );
+    
     if (duplicate) {
       setError(`${newUser.type} with this username or email already exists`);
       setLoading(false);
       return;
     }
+    
     setTimeout(() => {
       if (newUser.type === 'student') {
         const newStudent = {
@@ -353,6 +317,7 @@ const AdminDashboard = ({ user, onLogout }) => {
         setSupervisors([...supervisors, newSupervisor]);
         setMessage('Supervisor added successfully!');
       }
+      
       setNewUser({
         type: 'student',
         username: '',
@@ -376,14 +341,17 @@ const AdminDashboard = ({ user, onLogout }) => {
       setLoading(false);
       return;
     }
+    
     const duplicate = topics.find(t =>
       t.title.toLowerCase() === newTopic.title.toLowerCase()
     );
+    
     if (duplicate) {
       setError('Topic with this title already exists');
       setLoading(false);
       return;
     }
+    
     setTimeout(() => {
       const newTopicObj = {
         id: Math.max(...topics.map(t => t.id), 0) + 1,
@@ -393,6 +361,7 @@ const AdminDashboard = ({ user, onLogout }) => {
         status: 'available',
         createdAt: new Date().toISOString().split('T')[0]
       };
+      
       setTopics([...topics, newTopicObj]);
       setMessage('Topic added successfully! It will be available for auto-allocation.');
       setNewTopic({ title: '', description: '', department: 'Computer Science' });
@@ -447,17 +416,17 @@ const AdminDashboard = ({ user, onLogout }) => {
                 <div>
                   <h1 style={{ margin: 0, fontSize: '1.8rem'}}>
                     <i className="fas fa-user-shield me-2"></i>
-                    Admin dashboard
+                    Admin Dashboard
                   </h1>
                   <p className="welcome-text" style={{ margin: 0}}>
                     Nnamdi Azikiwe University, Awka
-                    </p>
-                    <p style={{ margin: '5px 0 0 0', color: '#6c757d', fontSize: '14px' }}>
-                      System Administrator: <strong>{user.username}</strong>
-                    </p>
-                  </div>
+                  </p>
+                  <p style={{ margin: '5px 0 0 0', color: '#6c757d', fontSize: '14px' }}>
+                    System Administrator: <strong>{user.username}</strong>
+                  </p>
                 </div>
               </div>
+            </div>
 
             <div className="col-md-6 text-end">
               <div className="header-stats">
@@ -554,6 +523,36 @@ const AdminDashboard = ({ user, onLogout }) => {
                   <i className="fas fa-check-circle text-info stat-icon"></i>
                   <h3>{allocations.filter(a => a.status === 'accepted').length}</h3>
                   <p>Completed Allocations</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-12 mt-4">
+              <div className="card">
+                <div className="card-header">
+                  <h5>Quick Actions</h5>
+                </div>
+                <div className="card-body">
+                  <div className="row">
+                    <div className="col-md-4 mb-3">
+                      <button className="btn btn-primary w-100" onClick={handleRunAllocation}>
+                        <i className="fas fa-robot me-2"></i>
+                        Run Auto Allocation
+                      </button>
+                    </div>
+                    <div className="col-md-4 mb-3">
+                      <button className="btn btn-success w-100" onClick={handleExportReport}>
+                        <i className="fas fa-file-export me-2"></i>
+                        Export Report
+                      </button>
+                    </div>
+                    <div className="col-md-4 mb-3">
+                      <button className="btn btn-info w-100" onClick={() => setActiveTab('settings')}>
+                        <i className="fas fa-cog me-2"></i>
+                        System Settings
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -851,6 +850,13 @@ const AdminDashboard = ({ user, onLogout }) => {
                                 >
                                   <i className="fas fa-eye"></i>
                                 </button>
+                                <button
+                                  className="btn btn-outline-danger btn-sm"
+                                  onClick={() => handleDeleteSupervisor(supervisor.id)}
+                                  title="Delete Supervisor"
+                                >
+                                  <i className="fas fa-trash"></i>
+                                </button>
                               </div>
                             </td>
                           </tr>
@@ -981,8 +987,18 @@ const AdminDashboard = ({ user, onLogout }) => {
           <div className="row">
             <div className="col-12">
               <div className="card">
-                <div className="card-header">
+                <div className="card-header d-flex justify-content-between align-items-center">
                   <h5>Topic Allocation Management</h5>
+                  <div>
+                    <button className="btn btn-primary me-2" onClick={handleRunAllocation}>
+                      <i className="fas fa-robot me-1"></i>
+                      Run Auto Allocation
+                    </button>
+                    <button className="btn btn-success" onClick={handleExportReport}>
+                      <i className="fas fa-file-export me-1"></i>
+                      Export Report
+                    </button>
+                  </div>
                 </div>
                 <div className="card-body">
                   <div className="table-responsive">
@@ -1048,14 +1064,6 @@ const AdminDashboard = ({ user, onLogout }) => {
                       </tbody>
                     </table>
                   </div>
-                  <div className="mt-3">
-                    <button className="btn btn-primary me-2" onClick={handleRunAllocation} disabled={loading}>
-                      {loading ? 'Allocating...' : 'Run Auto Allocation'}
-                    </button>
-                    <button className="btn btn-outline-secondary" onClick={handleExportReport}>
-                      <i className="fas fa-download me-1"></i>Export Report
-                    </button>
-                  </div>
                 </div>
               </div>
             </div>
@@ -1064,7 +1072,7 @@ const AdminDashboard = ({ user, onLogout }) => {
 
         {activeTab === 'settings' && (
           <div className="row">
-            <div className="col-md-6">
+            <div className="col-md-8">
               <div className="card">
                 <div className="card-header">
                   <h5>System Settings</h5>
@@ -1106,34 +1114,34 @@ const AdminDashboard = ({ user, onLogout }) => {
                     />
                     <label className="form-check-label">Enable Email Notifications</label>
                   </div>
-                  <button className="btn btn-primary" onClick={handleSaveSettings} disabled={loading}>
+                  <button
+                    className="btn btn-primary"
+                    onClick={handleSaveSettings}
+                    disabled={loading}
+                  >
                     {loading ? 'Saving...' : 'Save Settings'}
                   </button>
                 </div>
               </div>
             </div>
-            <div className="col-md-6">
+            <div className="col-md-4">
               <div className="card">
                 <div className="card-header">
                   <h5>System Information</h5>
                 </div>
                 <div className="card-body">
-                  <div className="system-info">
-                    <p><strong>Version:</strong> 1.0.0</p>
-                    <p><strong>Database:</strong> PostgreSQL 15</p>
-                    <p><strong>Backend:</strong> Node.js + Express</p>
-                    <p><strong>Frontend:</strong> React.js</p>
-                    <p><strong>Academic Year:</strong> {systemSettings.academicYear}</p>
-                    <p><strong>Allocation Deadline:</strong> {systemSettings.allocationDeadline}</p>
-                    <p><strong>Last Backup:</strong> 2025-01-14 08:30:45</p>
-                    <p><strong>System Status:</strong> <span className="text-success">Operational</span></p>
-                  </div>
+                  <p><strong>Version:</strong> 1.0.0</p>
+                  <p><strong>Last Backup:</strong> Today, 10:30 AM</p>
+                  <p><strong>Active Users:</strong> {students.length + supervisors.length + 1}</p>
+                  <p><strong>Database:</strong> Mock Data</p>
                   <div className="mt-3">
-                    <button className="btn btn-outline-info btn-sm me-2">
-                      <i className="fas fa-database me-1"></i>Backup Database
+                    <button className="btn btn-outline-secondary btn-sm me-2">
+                      <i className="fas fa-database me-1"></i>
+                      Backup Data
                     </button>
-                    <button className="btn btn-outline-warning btn-sm">
-                      <i className="fas fa-sync me-1"></i>Clear Cache
+                    <button className="btn btn-outline-info btn-sm">
+                      <i className="fas fa-chart-bar me-1"></i>
+                      View Logs
                     </button>
                   </div>
                 </div>
