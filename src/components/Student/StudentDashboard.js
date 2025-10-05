@@ -14,11 +14,11 @@ const StudentDashboard = ({ user, onLogout }) => {
   useEffect(() => {
     const fetchStudentData = () => {
       try {
-        const currentStudent = mockStudents.find(s => s.registrationNumber === user.username);
+        const currentStudent = mockStudents.find(s => s.username === user.username);
         
         if (currentStudent) {
           const allocation = mockAllocations.find(a => a.studentId === currentStudent.id);
-          const topic = mockTopics.find(t => t.id === allocation?.topicId);
+          const topic = mockTopics.find(t => t.studentId === currentStudent.id);
           const supervisorData = mockSupervisors.find(s => s.id === allocation?.supervisorId);
           const coStudentsData = mockStudents.filter(s => {
             const studentAllocation = mockAllocations.find(a => a.studentId === s.id);

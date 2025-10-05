@@ -14,7 +14,7 @@ const SupervisorDashboard = ({ user, onLogout }) => {
       // Get supervisor's students based on ACTUAL allocations
       const supervisorStudents = mockStudents.filter(student => 
         mockAllocations.some(allocation => 
-          allocation.studentId === student.id && allocation.supervisorId === 101
+          allocation.studentId === student.id && allocation.supervisorId === 1
         )
       );
 
