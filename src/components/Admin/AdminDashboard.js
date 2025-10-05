@@ -333,21 +333,30 @@ const AdminDashboard = ({ user, onLogout }) => {
     }, 500);
   };
 
+  // Enhanced duplicate topic detection
+  const checkDuplicateTopic = (title) => {
+    return topics.some(topic =>
+      topic.title.toLowerCase().trim() === title.toLowerCase().trim()
+    );
+  };
+
   const handleAddTopic = () => {
     setLoading(true);
     setError('');
+    
     if (!newTopic.title) {
       setError('Topic title is required');
       setLoading(false);
       return;
     }
     
+    // Enhanced duplicate detection
     const duplicate = topics.find(t =>
-      t.title.toLowerCase() === newTopic.title.toLowerCase()
+      t.title.toLowerCase().trim() === newTopic.title.toLowerCase().trim()
     );
     
     if (duplicate) {
-      setError('Topic with this title already exists');
+      setError(`Topic "${newTopic.title}" already exists! Please choose a different title.`);
       setLoading(false);
       return;
     }
@@ -382,12 +391,6 @@ const AdminDashboard = ({ user, onLogout }) => {
       ...prev,
       [field]: value
     }));
-  };
-
-  const checkDuplicateTopic = (title) => {
-    return topics.some(topic =>
-      topic.title.toLowerCase().trim() === title.toLowerCase().trim()
-    );
   };
 
   if (loading) {
@@ -888,9 +891,10 @@ const AdminDashboard = ({ user, onLogout }) => {
                       placeholder="Enter topic title"
                     />
                     {newTopic.title && checkDuplicateTopic(newTopic.title) && (
-                      <div className="text-danger mt-1">
-                        <i className="fas fa-exclamation-triangle me-1"></i>
-                        Topic with this title already exists!
+                      <div className="alert alert-warning mt-2 p-2">
+                        <i className="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Duplicate Topic Detected!</strong><br/>
+                        A topic with the title "<strong>{newTopic.title}</strong>" already exists.
                       </div>
                     )}
                   </div>
