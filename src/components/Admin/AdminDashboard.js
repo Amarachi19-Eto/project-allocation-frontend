@@ -529,36 +529,6 @@ const AdminDashboard = ({ user, onLogout }) => {
                 </div>
               </div>
             </div>
-
-            <div className="col-12 mt-4">
-              <div className="card">
-                <div className="card-header">
-                  <h5>Quick Actions</h5>
-                </div>
-                <div className="card-body">
-                  <div className="row">
-                    <div className="col-md-4 mb-3">
-                      <button className="btn btn-primary w-100" onClick={handleRunAllocation}>
-                        <i className="fas fa-robot me-2"></i>
-                        Run Auto Allocation
-                      </button>
-                    </div>
-                    <div className="col-md-4 mb-3">
-                      <button className="btn btn-success w-100" onClick={handleExportReport}>
-                        <i className="fas fa-file-export me-2"></i>
-                        Export Report
-                      </button>
-                    </div>
-                    <div className="col-md-4 mb-3">
-                      <button className="btn btn-info w-100" onClick={() => setActiveTab('settings')}>
-                        <i className="fas fa-cog me-2"></i>
-                        System Settings
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         )}
 
@@ -1075,7 +1045,7 @@ const AdminDashboard = ({ user, onLogout }) => {
 
         {activeTab === 'settings' && (
           <div className="row">
-            <div className="col-md-8">
+            <div className="col-12">
               <div className="card">
                 <div className="card-header">
                   <h5>System Settings</h5>
@@ -1124,29 +1094,6 @@ const AdminDashboard = ({ user, onLogout }) => {
                   >
                     {loading ? 'Saving...' : 'Save Settings'}
                   </button>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-4">
-              <div className="card">
-                <div className="card-header">
-                  <h5>System Information</h5>
-                </div>
-                <div className="card-body">
-                  <p><strong>Version:</strong> 1.0.0</p>
-                  <p><strong>Last Backup:</strong> Today, 10:30 AM</p>
-                  <p><strong>Active Users:</strong> {students.length + supervisors.length + 1}</p>
-                  <p><strong>Database:</strong> Mock Data</p>
-                  <div className="mt-3">
-                    <button className="btn btn-outline-secondary btn-sm me-2">
-                      <i className="fas fa-database me-1"></i>
-                      Backup Data
-                    </button>
-                    <button className="btn btn-outline-info btn-sm">
-                      <i className="fas fa-chart-bar me-1"></i>
-                      View Logs
-                    </button>
-                  </div>
                 </div>
               </div>
             </div>
