@@ -63,7 +63,27 @@ const AdminDashboard = ({ user, onLogout }) => {
   const handleEditStudent = (studentId) => {
     const student = students.find(s => s.id === studentId);
     if (student) {
-      alert(`Edit student: ${student.firstName} ${student.lastName}\nEdit form would open here.`);
+      const newFirstName = prompt('Edit First Name:', student.firstName);
+      const newLastName = prompt('Edit Last Name:', student.lastName);
+      const newEmail = prompt('Edit Email:', student.email);
+      const newRegNo = prompt('Edit Registration Number:', student.registrationNumber);
+      
+      if (newFirstName !== null && newLastName !== null) {
+        const updatedStudents = students.map(s => 
+          s.id === studentId 
+            ? { 
+                ...s, 
+                firstName: newFirstName.trim(),
+                lastName: newLastName.trim(),
+                email: newEmail !== null ? newEmail.trim() : s.email,
+                registrationNumber: newRegNo !== null ? newRegNo.trim() : s.registrationNumber
+              }
+            : s
+        );
+        
+        setStudents(updatedStudents);
+        setMessage('Student updated successfully!');
+      }
     }
   };
 
@@ -77,7 +97,27 @@ const AdminDashboard = ({ user, onLogout }) => {
   const handleEditSupervisor = (supervisorId) => {
     const supervisor = supervisors.find(s => s.id === supervisorId);
     if (supervisor) {
-      alert(`Edit supervisor: ${supervisor.firstName} ${supervisor.lastName}\nEdit form would open here.`);
+      const newFirstName = prompt('Edit First Name:', supervisor.firstName);
+      const newLastName = prompt('Edit Last Name:', supervisor.lastName);
+      const newEmail = prompt('Edit Email:', supervisor.email);
+      const newStaffId = prompt('Edit Staff ID:', supervisor.staffId);
+      
+      if (newFirstName !== null && newLastName !== null) {
+        const updatedSupervisors = supervisors.map(s => 
+          s.id === supervisorId 
+            ? { 
+                ...s, 
+                firstName: newFirstName.trim(),
+                lastName: newLastName.trim(),
+                email: newEmail !== null ? newEmail.trim() : s.email,
+                staffId: newStaffId !== null ? newStaffId.trim() : s.staffId
+              }
+            : s
+        );
+        
+        setSupervisors(updatedSupervisors);
+        setMessage('Supervisor updated successfully!');
+      }
     }
   };
 
@@ -160,19 +200,27 @@ const AdminDashboard = ({ user, onLogout }) => {
   const handleEditTopic = (topicId) => {
     const topic = topics.find(t => t.id === topicId);
     if (topic) {
-      alert(`Edit topic: ${topic.title}\nEdit form would open here.`);
-    }
-  };
-
-  const handleDeleteTopic = (topicId) => {
-    if (window.confirm('Are you sure you want to delete this topic? This action cannot be undone.')) {
-      const topicToDelete = topics.find(t => t.id === topicId);
-      const updatedAllocations = allocations.filter(allocation =>
-        allocation.topic !== topicToDelete?.title
-      );
-      setAllocations(updatedAllocations);
-      setTopics(topics.filter(topic => topic.id !== topicId));
-      setMessage('Topic deleted successfully!');
+      const newTitle = prompt('Edit Topic Title:', topic.title);
+      if (newTitle && newTitle.trim() !== '') {
+        const newDescription = prompt('Edit Topic Description:', topic.description);
+        const newDepartment = prompt('Edit Department:', topic.department);
+        
+        if (newTitle !== null) {
+          const updatedTopics = topics.map(t => 
+            t.id === topicId 
+              ? { 
+                  ...t, 
+                  title: newTitle.trim(),
+                  description: newDescription !== null ? newDescription.trim() : t.description,
+                  department: newDepartment !== null ? newDepartment.trim() : t.department
+                }
+              : t
+          );
+          
+          setTopics(updatedTopics);
+          setMessage('Topic updated successfully!');
+        }
+      }
     }
   };
 
@@ -181,7 +229,9 @@ const AdminDashboard = ({ user, onLogout }) => {
     if (allocation) {
       const student = students.find(s => s.id === allocation.studentId);
       const supervisor = supervisors.find(s => s.id === allocation.supervisorId);
-      alert(`Viewing allocation details:\nStudent: ${student?.firstName} ${student?.lastName}\nTopic: ${allocation.topic}\nSupervisor: ${supervisor?.firstName} ${supervisor?.lastName}`);
+      const topic = topics.find(t => t.id === allocation.topicId);
+      
+      alert(`Viewing allocation details:\nStudent: ${student?.firstName} ${student?.lastName}\nTopic: ${topic?.title || allocation.topic}\nSupervisor: ${supervisor?.firstName} ${supervisor?.lastName}`);
     }
   };
 
@@ -206,10 +256,14 @@ const AdminDashboard = ({ user, onLogout }) => {
   const handleRunAllocation = () => {
     setLoading(true);
     setTimeout(() => {
+      // Get available topics (not allocated)
       const availableTopics = topics.filter(topic => topic.status === 'available');
+      
+      // Get unallocated students
       const unallocatedStudents = students.filter(student =>
         !allocations.some(allocation => allocation.studentId === student.id)
       );
+      
       const newAllocations = [];
       const updatedTopics = [...topics];
       
@@ -997,20 +1051,9 @@ const AdminDashboard = ({ user, onLogout }) => {
                                   onClick={() => handleEditTopic(topic.id)}
                                   title="Edit Topic"
                                 >
-                                  <i className="fas fa-edit"></i>
-                                </button>
-                                <button
-                                  className="btn btn-outline-danger btn-sm"
-                                  onClick={() => handleDeleteTopic(topic.id)}
-                                  title="Delete Topic"
-                                  disabled={topic.status === 'allocated'}
-                                >
-                                  <i className="fas fa-trash"></i>
+                                  <i className="fas fa-edit"></i> Edit
                                 </button>
                               </div>
-                              {topic.status === 'allocated' && (
-                                <small className="text-muted d-block mt-1">Cannot delete allocated topic</small>
-                              )}
                             </td>
                           </tr>
                         ))}
@@ -1083,18 +1126,11 @@ const AdminDashboard = ({ user, onLogout }) => {
                               <td>
                                 <div className="btn-group">
                                   <button
-                                    className="btn btn-outline-info btn-sm"
-                                    onClick={() => handleViewAllocation(allocation.id)}
-                                    title="View Allocation"
-                                  >
-                                    <i className="fas fa-eye"></i>
-                                  </button>
-                                  <button
                                     className="btn btn-outline-warning btn-sm"
                                     onClick={() => handleReallocate(allocation.id)}
                                     title="Reallocate"
                                   >
-                                    <i className="fas fa-sync"></i>
+                                    <i className="fas fa-sync"></i> Reallocate
                                   </button>
                                 </div>
                               </td>

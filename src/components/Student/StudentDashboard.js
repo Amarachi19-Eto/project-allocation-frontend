@@ -310,10 +310,6 @@ const StudentDashboard = ({ user, onLogout }) => {
                             Decline Topic
                           </button>
                         </div>
-                        <small className="text-muted mt-2 d-block">
-                          <i className="fas fa-info-circle me-1"></i>
-                          If you decline, you'll be assigned a new topic by the administrator.
-                        </small>
                       </div>
                     )}
 
