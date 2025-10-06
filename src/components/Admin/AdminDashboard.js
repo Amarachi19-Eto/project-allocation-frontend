@@ -34,12 +34,27 @@ const AdminDashboard = ({ user, onLogout }) => {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
+  // Function to update topic status based on allocations and studentId
+  const updateTopicStatus = (topicsList, allocationsList) => {
+    return topicsList.map(topic => {
+      // Check if topic has studentId (from your mockData) OR if it's allocated
+      const isAllocated = topic.studentId || allocationsList.some(allocation => 
+        allocation.topicId === topic.id
+      );
+      return {
+        ...topic,
+        status: isAllocated ? 'allocated' : 'available'
+      };
+    });
+  };
+
   useEffect(() => {
     // Use mock data instead of API calls
     setTimeout(() => {
+      const initialTopics = updateTopicStatus(mockTopics, mockAllocations);
       setStudents(mockStudents);
       setSupervisors(mockSupervisors);
-      setTopics(mockTopics);
+      setTopics(initialTopics);
       setAllocations(mockAllocations);
       setLoading(false);
     }, 1000);
@@ -172,8 +187,18 @@ const AdminDashboard = ({ user, onLogout }) => {
 
   const handleReallocate = (allocationId) => {
     if (window.confirm('Reallocate this topic to a different student?')) {
+      const allocationToRemove = allocations.find(a => a.id === allocationId);
       const updatedAllocations = allocations.filter(allocation => allocation.id !== allocationId);
+      
+      // Update the topic status back to available and remove studentId
+      const updatedTopics = topics.map(topic => 
+        topic.id === allocationToRemove.topicId 
+          ? { ...topic, status: 'available', studentId: null }
+          : topic
+      );
+      
       setAllocations(updatedAllocations);
+      setTopics(updatedTopics);
       setMessage('Topic available for reallocation. Run Auto Allocation again.');
     }
   };
@@ -393,6 +418,12 @@ const AdminDashboard = ({ user, onLogout }) => {
     }));
   };
 
+  // Calculate statistics for display
+  const availableTopicsCount = topics.filter(topic => topic.status === 'available').length;
+  const allocatedTopicsCount = topics.filter(topic => topic.status === 'allocated').length;
+  const pendingAllocationsCount = allocations.filter(a => a.status === 'pending').length;
+  const acceptedAllocationsCount = allocations.filter(a => a.status === 'accepted').length;
+
   if (loading) {
     return (
       <div className="admin-dashboard-loading">
@@ -524,8 +555,37 @@ const AdminDashboard = ({ user, onLogout }) => {
               <div className="card stat-card">
                 <div className="card-body text-center">
                   <i className="fas fa-check-circle text-info stat-icon"></i>
-                  <h3>{allocations.filter(a => a.status === 'accepted').length}</h3>
-                  <p>Completed Allocations</p>
+                  <h3>{acceptedAllocationsCount}</h3>
+                  <p>Accepted Topics</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Additional stats */}
+            <div className="col-md-4">
+              <div className="card stat-card">
+                <div className="card-body text-center">
+                  <i className="fas fa-clock text-success stat-icon"></i>
+                  <h3>{availableTopicsCount}</h3>
+                  <p>Available Topics</p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="card stat-card">
+                <div className="card-body text-center">
+                  <i className="fas fa-check-double text-primary stat-icon"></i>
+                  <h3>{allocatedTopicsCount}</h3>
+                  <p>Allocated Topics</p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="card stat-card">
+                <div className="card-body text-center">
+                  <i className="fas fa-hourglass-half text-warning stat-icon"></i>
+                  <h3>{pendingAllocationsCount}</h3>
+                  <p>Pending Acceptance</p>
                 </div>
               </div>
             </div>
@@ -903,6 +963,9 @@ const AdminDashboard = ({ user, onLogout }) => {
               <div className="card">
                 <div className="card-header">
                   <h5>Manage Topics ({topics.length})</h5>
+                  <small className="text-muted">
+                    Available: {availableTopicsCount} | Allocated: {allocatedTopicsCount}
+                  </small>
                 </div>
                 <div className="card-body">
                   <div className="table-responsive">
@@ -940,10 +1003,14 @@ const AdminDashboard = ({ user, onLogout }) => {
                                   className="btn btn-outline-danger btn-sm"
                                   onClick={() => handleDeleteTopic(topic.id)}
                                   title="Delete Topic"
+                                  disabled={topic.status === 'allocated'}
                                 >
                                   <i className="fas fa-trash"></i>
                                 </button>
                               </div>
+                              {topic.status === 'allocated' && (
+                                <small className="text-muted d-block mt-1">Cannot delete allocated topic</small>
+                              )}
                             </td>
                           </tr>
                         ))}

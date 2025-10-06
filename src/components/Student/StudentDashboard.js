@@ -11,54 +11,97 @@ const StudentDashboard = ({ user, onLogout }) => {
   const [message, setMessage] = useState('');
   const [supervisorFeedback, setSupervisorFeedback] = useState([]);
 
+  // Function to get student's allocation and topic
+  const getStudentAllocation = (studentId) => {
+    // First check allocations
+    const allocation = mockAllocations.find(a => a.studentId === studentId);
+    if (allocation) {
+      const topic = mockTopics.find(t => t.id === allocation.topicId);
+      const supervisorData = mockSupervisors.find(s => s.id === allocation.supervisorId);
+      return { allocation, topic, supervisor: supervisorData };
+    }
+    
+    // If no allocation, check if topic has studentId directly (from your mockData)
+    const topic = mockTopics.find(t => t.studentId === studentId);
+    if (topic) {
+      const allocation = mockAllocations.find(a => a.topicId === topic.id) || {
+        id: Math.random(),
+        studentId: studentId,
+        topicId: topic.id,
+        status: 'pending',
+        allocatedDate: '2025-01-15'
+      };
+      const supervisorData = mockSupervisors.find(s => 
+        mockAllocations.find(a => a.studentId === studentId && a.supervisorId === s.id)
+      ) || mockSupervisors[0];
+      
+      return { allocation, topic, supervisor: supervisorData };
+    }
+    
+    return null;
+  };
+
   useEffect(() => {
     const fetchStudentData = () => {
       try {
         const currentStudent = mockStudents.find(s => s.username === user.username);
         
         if (currentStudent) {
-          const allocation = mockAllocations.find(a => a.studentId === currentStudent.id);
-          const topic = mockTopics.find(t => t.studentId === currentStudent.id);
-          const supervisorData = mockSupervisors.find(s => s.id === allocation?.supervisorId);
-          const coStudentsData = mockStudents.filter(s => {
-            const studentAllocation = mockAllocations.find(a => a.studentId === s.id);
-            return studentAllocation?.supervisorId === allocation?.supervisorId && s.id !== currentStudent.id;
-          }).map(s => {
-            const studentAlloc = mockAllocations.find(a => a.studentId === s.id);
-            const studentTopic = mockTopics.find(t => t.id === studentAlloc?.topicId);
-            return {
-              id: s.id,
-              name: `${s.firstName} ${s.lastName}`,
-              regNo: s.registrationNumber,
-              email: s.email,
-              projectTitle: studentTopic?.title || "No topic assigned",
-              status: studentAlloc?.status || "pending"
-            };
-          });
+          const studentData = getStudentAllocation(currentStudent.id);
+          
+          if (studentData && studentData.allocation) {
+            const { allocation, topic, supervisor } = studentData;
 
-          setProjectTopic(topic ? {
-            id: topic.id,
-            title: topic.title,
-            description: topic.description || "No description available.",
-            status: allocation?.status || "pending",
-            assignedDate: allocation?.allocatedDate || "2025-01-15"
-          } : null);
+            setProjectTopic(topic ? {
+              id: topic.id,
+              title: topic.title,
+              description: topic.description || "No description available.",
+              status: allocation.status || "pending",
+              assignedDate: allocation.allocatedDate || "2025-01-15"
+            } : null);
 
-          setSupervisor(supervisorData ? {
-            id: supervisorData.id,
-            name: `Dr. ${supervisorData.firstName} ${supervisorData.lastName}`,
-            email: supervisorData.email,
-            phone: supervisorData.phone || "+234-800-000-0000",
-            department: supervisorData.department,
-            office: supervisorData.office || "Block A, Room 101",
-            officeHours: supervisorData.officeHours || "Monday-Friday: 9AM-5PM",
-            expertise: supervisorData.expertise || ["General Supervision"],
-            rating: supervisorData.rating || 4.5
-          } : null);
+            setSupervisor(supervisor ? {
+              id: supervisor.id,
+              name: `Dr. ${supervisor.firstName} ${supervisor.lastName}`,
+              email: supervisor.email,
+              phone: supervisor.phone || "+234-800-000-0000",
+              department: supervisor.department,
+              office: supervisor.office || "Block A, Room 101",
+              officeHours: supervisor.officeHours || "Monday-Friday: 9AM-5PM",
+              expertise: supervisor.expertise || ["General Supervision"],
+              rating: supervisor.rating || 4.5
+            } : null);
 
-          setCoStudents(coStudentsData);
+            // Get co-students (students with same supervisor)
+            const coStudentsData = mockStudents
+              .filter(s => {
+                if (s.id === currentStudent.id) return false;
+                const coStudentData = getStudentAllocation(s.id);
+                return coStudentData && 
+                       coStudentData.supervisor && 
+                       supervisor &&
+                       coStudentData.supervisor.id === supervisor.id;
+              })
+              .map(s => {
+                const coStudentData = getStudentAllocation(s.id);
+                return {
+                  id: s.id,
+                  name: `${s.firstName} ${s.lastName}`,
+                  regNo: s.registrationNumber,
+                  email: s.email,
+                  projectTitle: coStudentData.topic?.title || "No topic assigned",
+                  status: coStudentData.allocation?.status || "pending"
+                };
+              });
 
-          // Mock feedback data - in real app, this would come from API
+            setCoStudents(coStudentsData);
+          } else {
+            setProjectTopic(null);
+            setSupervisor(null);
+            setCoStudents([]);
+          }
+
+          // Mock feedback data
           const mockFeedback = [
             {
               id: 1,
@@ -71,12 +114,6 @@ const StudentDashboard = ({ user, onLogout }) => {
               message: "Your project proposal needs more detailed methodology section. Let's discuss this in our next meeting.",
               date: "2025-01-20",
               type: "suggestion"
-            },
-            {
-              id: 3,
-              message: "Well done on completing the initial requirements analysis. The use case diagrams are clear and comprehensive.",
-              date: "2025-01-15",
-              type: "praise"
             }
           ];
           setSupervisorFeedback(mockFeedback);
@@ -100,22 +137,6 @@ const StudentDashboard = ({ user, onLogout }) => {
            - Chapter 1-3: Week 8  
            - Complete Draft: Week 12
            - Final Submission: Week 14
-
-        4. ORIGINALITY REQUIREMENTS
-           - Maximum 20% similarity index allowed
-           - Proper citation and referencing mandatory
-           - plagiarism results in automatic failure
-
-        5. TECHNICAL REQUIREMENTS
-           - Source code must be version controlled (Git)
-           - Database backup must be submitted
-           - Complete documentation required
-
-        6. ASSESSMENT CRITERIA
-           - Originality: 25%
-           - Technical Complexity: 30%
-           - Documentation: 20%
-           - Defense Performance: 25%
         `);
 
         setLoading(false);
@@ -132,7 +153,10 @@ const StudentDashboard = ({ user, onLogout }) => {
     setLoading(true);
     try {
       setTimeout(() => {
-        setProjectTopic(prev => ({ ...prev, status: action }));
+        setProjectTopic(prev => ({ 
+          ...prev, 
+          status: action 
+        }));
         
         if (action === 'accepted') {
           setMessage('🎉 Topic accepted successfully! You can now begin your project work.');
@@ -142,7 +166,7 @@ const StudentDashboard = ({ user, onLogout }) => {
         
         setLoading(false);
         setTimeout(() => setMessage(''), 5000);
-      }, 500);
+      }, 1000);
     } catch (error) {
       setMessage('Error processing your request. Please try again.');
       setLoading(false);
@@ -164,6 +188,15 @@ const StudentDashboard = ({ user, onLogout }) => {
       case 'suggestion': return 'Suggestion';
       case 'progress': return 'Progress Update';
       default: return 'Feedback';
+    }
+  };
+
+  const getStatusBadgeClass = (status) => {
+    switch (status) {
+      case 'accepted': return 'status-badge accepted';
+      case 'declined': return 'status-badge declined';
+      case 'pending': return 'status-badge pending';
+      default: return 'status-badge';
     }
   };
 
@@ -232,7 +265,7 @@ const StudentDashboard = ({ user, onLogout }) => {
               <div className="card-header bg-primary text-white">
                 <h5 className="mb-0">
                   <i className="fas fa-tasks me-2"></i>
-                  Assigned Project Topic
+                  {projectTopic ? 'Assigned Project Topic' : 'Project Topic Status'}
                 </h5>
               </div>
               <div className="card-body">
@@ -242,12 +275,12 @@ const StudentDashboard = ({ user, onLogout }) => {
                     <p className="text-muted topic-description">{projectTopic.description}</p>
                     
                     <div className="topic-meta">
-                      <div className="d-flex justify-content-between">
+                      <div className="d-flex justify-content-between align-items-center">
                         <small className="text-muted">
                           <i className="fas fa-calendar me-1"></i>
                           Assigned: {projectTopic.assignedDate}
                         </small>
-                        <span className={`status-badge ${projectTopic.status}`}>
+                        <span className={getStatusBadgeClass(projectTopic.status)}>
                           {projectTopic.status.toUpperCase()}
                         </span>
                       </div>
@@ -257,7 +290,7 @@ const StudentDashboard = ({ user, onLogout }) => {
                       <div className="topic-actions mt-4">
                         <div className="alert alert-warning">
                           <i className="fas fa-exclamation-circle me-2"></i>
-                          Please accept or decline your topic
+                          Please accept or decline your assigned topic within 7 days
                         </div>
                         <div className="d-grid gap-2">
                           <button
@@ -277,30 +310,40 @@ const StudentDashboard = ({ user, onLogout }) => {
                             Decline Topic
                           </button>
                         </div>
+                        <small className="text-muted mt-2 d-block">
+                          <i className="fas fa-info-circle me-1"></i>
+                          If you decline, you'll be assigned a new topic by the administrator.
+                        </small>
                       </div>
                     )}
 
                     {projectTopic.status === 'accepted' && (
                       <div className="alert alert-success mt-3">
                         <i className="fas fa-check-circle me-2"></i>
-                        Topic accepted. You may now begin your project work.
+                        <strong>Topic Accepted!</strong> You may now begin your project work. 
+                        Contact your supervisor to schedule your first meeting.
                       </div>
                     )}
 
                     {projectTopic.status === 'declined' && (
                       <div className="alert alert-info mt-3">
                         <i className="fas fa-info-circle me-2"></i>
-                        Topic declined. Waiting for administrator to assign a new topic.
+                        <strong>Topic Declined.</strong> The administrator will assign you a new topic within 48 hours.
+                        Please check back later.
                       </div>
                     )}
                   </>
                 ) : (
-                  <p className="text-muted">No project topic assigned yet.</p>
+                  <div className="text-center text-muted py-4">
+                    <i className="fas fa-clock fa-2x mb-3"></i>
+                    <p>No project topic assigned yet.</p>
+                    <small>Please wait for the administrator to allocate a topic to you.</small>
+                  </div>
                 )}
               </div>
             </div>
 
-            {/* NEW FEEDBACK SECTION - ADDED HERE */}
+            {/* Feedback Section */}
             <div className="card feedback-card mt-4">
               <div className="card-header bg-info text-white">
                 <div className="d-flex justify-content-between align-items-center">
@@ -418,9 +461,21 @@ const StudentDashboard = ({ user, onLogout }) => {
                         ))}
                       </div>
                     </div>
+                    {projectTopic && projectTopic.status === 'accepted' && (
+                      <div className="mt-3 p-3 bg-light rounded">
+                        <small className="text-muted">
+                          <i className="fas fa-info-circle me-1"></i>
+                          You can now contact your supervisor to discuss your project.
+                        </small>
+                      </div>
+                    )}
                   </>
                 ) : (
-                  <p className="text-muted">No supervisor assigned yet.</p>
+                  <div className="text-center text-muted py-4">
+                    <i className="fas fa-user-tie fa-2x mb-3"></i>
+                    <p>No supervisor assigned yet.</p>
+                    <small>You will be assigned a supervisor when you receive a project topic.</small>
+                  </div>
                 )}
               </div>
             </div>
@@ -450,8 +505,8 @@ const StudentDashboard = ({ user, onLogout }) => {
                           {student.projectTitle && (
                             <div className="project-info">
                               <small className="text-muted">Project: {student.projectTitle}</small>
-                              <span className={`status-badge ${student.status}`}>
-                                {student.status.replace('_', ' ')}
+                              <span className={getStatusBadgeClass(student.status)}>
+                                {student.status.toUpperCase()}
                               </span>
                             </div>
                           )}
@@ -460,7 +515,10 @@ const StudentDashboard = ({ user, onLogout }) => {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-muted">No other students assigned to your supervisor yet.</p>
+                  <div className="text-center text-muted py-3">
+                    <i className="fas fa-users fa-2x mb-2"></i>
+                    <p>No other students assigned to your supervisor yet.</p>
+                  </div>
                 )}
               </div>
             </div>

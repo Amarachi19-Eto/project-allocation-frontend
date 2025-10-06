@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { mockStudents, mockTopics, mockAllocations } from '../../mockData';
+import { mockStudents, mockTopics, mockAllocations, mockSupervisors } from '../../mockData';
 
 const SupervisorDashboard = ({ user, onLogout }) => {
   const [assignedStudents, setAssignedStudents] = useState([]);
@@ -8,38 +8,53 @@ const SupervisorDashboard = ({ user, onLogout }) => {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
 
-  // Load consistent data
+  // Function to get student allocation data
+  const getStudentAllocationData = (studentId) => {
+    const allocation = mockAllocations.find(a => a.studentId === studentId);
+    if (!allocation) return { allocation: null, topic: null };
+
+    const topic = mockTopics.find(t => t.id === allocation.topicId);
+    return { allocation, topic };
+  };
+
   useEffect(() => {
     setTimeout(() => {
-      // Get supervisor's students based on ACTUAL allocations
-      const supervisorStudents = mockStudents.filter(student => 
-        mockAllocations.some(allocation => 
-          allocation.studentId === student.id && allocation.supervisorId === 1
-        )
-      );
+      // Find current supervisor
+      const currentSupervisor = mockSupervisors.find(s => s.username === user.username);
+      
+      if (currentSupervisor) {
+        // Get supervisor's students based on allocations
+        const supervisorStudents = mockStudents
+          .map(student => {
+            const { allocation, topic } = getStudentAllocationData(student.id);
+            
+            // Check if this student is allocated to current supervisor
+            if (allocation && allocation.supervisorId === currentSupervisor.id) {
+              return {
+                id: student.id,
+                name: `${student.firstName} ${student.lastName}`,
+                regNo: student.registrationNumber,
+                email: student.email,
+                projectTopic: topic?.title || "No topic assigned",
+                topicStatus: allocation?.status || "pending",
+                contact: student.phone || "+234-800-000-0000",
+                allocationDate: allocation?.allocatedDate || "N/A"
+              };
+            }
+            return null;
+          })
+          .filter(student => student !== null);
 
-      setAssignedStudents(supervisorStudents.map(student => {
-        const allocation = mockAllocations.find(a => a.studentId === student.id);
-        const topic = mockTopics.find(t => t.studentId === student.id);
-        
-        return {
-          id: student.id,
-          name: `${student.firstName} ${student.lastName}`,
-          regNo: student.registrationNumber,
-          email: student.email,
-          projectTopic: topic?.title || "No topic assigned",
-          topicStatus: allocation?.status || "not allocated",
-          contact: student.phone || "+234-800-000-0000"
-        };
-      }));
+        setAssignedStudents(supervisorStudents);
+      }
 
       setLoading(false);
     }, 1000);
-  }, []);
+  }, [user.username]);
 
   const handleFeedbackClick = (studentId) => {
     const student = assignedStudents.find(s => s.id === studentId);
-    if (student.topicStatus === 'not allocated') {
+    if (student.topicStatus === 'pending' || student.projectTopic === "No topic assigned") {
       setMessage(`Cannot give feedback - ${student.name} has no allocated topic yet.`);
       return;
     }
@@ -53,6 +68,7 @@ const SupervisorDashboard = ({ user, onLogout }) => {
     setTimeout(() => {
       setMessage(`Feedback sent to ${assignedStudents.find(s => s.id === studentId)?.name}`);
       setFeedback('');
+      setSelectedStudent(null);
       setLoading(false);
       setTimeout(() => setMessage(''), 3000);
     }, 500);
@@ -71,7 +87,6 @@ const SupervisorDashboard = ({ user, onLogout }) => {
 
   return (
     <div className="supervisor-dashboard">
-      {/* Header */}
       <header className="dashboard-header">
         <div className="container">
           <div className="row align-items-center">
@@ -105,6 +120,9 @@ const SupervisorDashboard = ({ user, onLogout }) => {
                 <span className="badge bg-success me-2">
                   {assignedStudents.filter(s => s.topicStatus === 'accepted').length} Active
                 </span>
+                <span className="badge bg-warning me-2">
+                  {assignedStudents.filter(s => s.topicStatus === 'pending').length} Pending
+                </span>
                 <button className="btn btn-outline-danger btn-sm" onClick={onLogout}>
                   <i className="fas fa-sign-out-alt me-1"></i>Logout
                 </button>
@@ -114,7 +132,6 @@ const SupervisorDashboard = ({ user, onLogout }) => {
         </div>
       </header>
 
-      {/* Main Content */}
       <div className="container mt-4">
         {message && (
           <div className="alert alert-success alert-dismissible fade show" role="alert">
@@ -124,7 +141,6 @@ const SupervisorDashboard = ({ user, onLogout }) => {
         )}
 
         <div className="row">
-          {/* Students List */}
           <div className="col-lg-12">
             <div className="card">
               <div className="card-header bg-primary text-white">
@@ -134,55 +150,72 @@ const SupervisorDashboard = ({ user, onLogout }) => {
                 </h5>
               </div>
               <div className="card-body">
-                <div className="table-responsive">
-                  <table className="table table-hover">
-                    <thead>
-                      <tr>
-                        <th>Student</th>
-                        <th>Project Topic</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {assignedStudents.map(student => (
-                        <tr key={student.id} className={selectedStudent?.id === student.id ? 'table-active' : ''}>
-                          <td>
-                            <div className="student-info">
-                              <strong>{student.name}</strong>
-                              <br />
-                              <small className="text-muted">{student.regNo}</small>
-                              <br />
-                              <small className="text-primary">{student.email}</small>
-                            </div>
-                          </td>
-                          <td>
-                            <div className="topic-info">
-                              <strong>{student.projectTopic}</strong>
-                            </div>
-                          </td>
-                          <td>
-                            <span className={`status-badge ${student.topicStatus.replace(' ', '-')}`}>
-                              {student.topicStatus.toUpperCase()}
-                            </span>
-                          </td>
-                          <td>
-                            <div className="btn-group">
-                              <button
-                                className="btn btn-outline-primary btn-sm"
-                                onClick={() => handleFeedbackClick(student.id)}
-                                title="Give Feedback"
-                                disabled={student.topicStatus === 'not allocated'}
-                              >
-                                <i className="fas fa-comment"></i> Feedback
-                              </button>
-                            </div>
-                          </td>
+                {assignedStudents.length > 0 ? (
+                  <div className="table-responsive">
+                    <table className="table table-hover">
+                      <thead>
+                        <tr>
+                          <th>Student</th>
+                          <th>Project Topic</th>
+                          <th>Status</th>
+                          <th>Allocation Date</th>
+                          <th>Actions</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody>
+                        {assignedStudents.map(student => (
+                          <tr key={student.id} className={selectedStudent?.id === student.id ? 'table-active' : ''}>
+                            <td>
+                              <div className="student-info">
+                                <strong>{student.name}</strong>
+                                <br />
+                                <small className="text-muted">{student.regNo}</small>
+                                <br />
+                                <small className="text-primary">{student.email}</small>
+                              </div>
+                            </td>
+                            <td>
+                              <div className="topic-info">
+                                <strong>{student.projectTopic}</strong>
+                              </div>
+                            </td>
+                            <td>
+                              <span className={`badge ${
+                                student.topicStatus === 'accepted' ? 'bg-success' : 
+                                student.topicStatus === 'pending' ? 'bg-warning' : 
+                                'bg-secondary'
+                              }`}>
+                                {student.topicStatus.toUpperCase()}
+                              </span>
+                            </td>
+                            <td>
+                              <small className="text-muted">{student.allocationDate}</small>
+                            </td>
+                            <td>
+                              <div className="btn-group">
+                                <button
+                                  className="btn btn-outline-primary btn-sm"
+                                  onClick={() => handleFeedbackClick(student.id)}
+                                  title="Give Feedback"
+                                  disabled={student.topicStatus === 'pending' || student.projectTopic === "No topic assigned"}
+                                >
+                                  <i className="fas fa-comment"></i> Feedback
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="text-center text-muted py-5">
+                    <i className="fas fa-users fa-3x mb-3"></i>
+                    <h5>No Students Assigned</h5>
+                    <p>You don't have any students assigned to you yet.</p>
+                    <small>Students will be allocated to you by the administrator.</small>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -216,7 +249,7 @@ const SupervisorDashboard = ({ user, onLogout }) => {
                           disabled={!feedback.trim() || loading}
                         >
                           <i className="fas fa-paper-plane me-1"></i>
-                          Send Feedback
+                          {loading ? 'Sending...' : 'Send Feedback'}
                         </button>
                         <button
                           className="btn btn-outline-secondary ms-2"
@@ -230,8 +263,16 @@ const SupervisorDashboard = ({ user, onLogout }) => {
                       <div className="student-details">
                         <h6>Student Details:</h6>
                         <p><strong>Project:</strong> {selectedStudent.projectTopic}</p>
+                        <p><strong>Status:</strong> 
+                          <span className={`badge ${
+                            selectedStudent.topicStatus === 'accepted' ? 'bg-success' : 'bg-warning'
+                          } ms-2`}>
+                            {selectedStudent.topicStatus}
+                          </span>
+                        </p>
                         <p><strong>Contact:</strong> {selectedStudent.contact}</p>
                         <p><strong>Email:</strong> {selectedStudent.email}</p>
+                        <p><strong>Allocated:</strong> {selectedStudent.allocationDate}</p>
                       </div>
                     </div>
                   </div>
